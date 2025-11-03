@@ -4,12 +4,12 @@ package com.banksystem.services;
 import com.banksystem.dto.ApiResponse;
 import com.banksystem.dto.HeadBankDTO;
 import com.banksystem.entity.CentralBank;
+import com.banksystem.entity.ChargesBook;
 import com.banksystem.entity.HeadBank;
+import com.banksystem.enums.BankType;
 import com.banksystem.exception.BusinessRuleException;
 import com.banksystem.exception.ResourceNotFoundException;
-import com.banksystem.repository.BranchRepository;
-import com.banksystem.repository.CentralBankRepository;
-import com.banksystem.repository.HeadBankRepository;
+import com.banksystem.repository.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -26,11 +26,15 @@ public class CentralBankAdminServices {
     private final HeadBankRepository headBankRepository;
     private final CentralBankRepository centralBankRepository;
     private final BranchRepository branchRepository;
+    private final ChargesRepository chargesRepository;
+    private final ChargesBookRepository chargesBookRepository;
 
-    public CentralBankAdminServices(HeadBankRepository headBankRepository, CentralBankRepository centralBankRepository, BranchRepository branchRepository) {
+    public CentralBankAdminServices(HeadBankRepository headBankRepository, CentralBankRepository centralBankRepository, BranchRepository branchRepository, ChargesRepository chargesRepository, ChargesBookRepository chargesBookRepository) {
         this.headBankRepository = headBankRepository;
         this.centralBankRepository = centralBankRepository;
         this.branchRepository = branchRepository;
+        this.chargesRepository = chargesRepository;
+        this.chargesBookRepository = chargesBookRepository;
     }
 
     public HeadBank addHeadBank( HeadBankDTO headBankDTO){
@@ -89,4 +93,5 @@ public class CentralBankAdminServices {
         List<HeadBank> headBanks=headBankRepository.findAll();
         return headBanks;
     }
+
 }

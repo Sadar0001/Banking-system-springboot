@@ -3,8 +3,10 @@ package com.banksystem.controller;
 
 import com.banksystem.dto.ApiResponse;
 import com.banksystem.dto.TellerDTO;
+import com.banksystem.entity.ChargesBook;
 import com.banksystem.entity.LoanApplication;
 import com.banksystem.entity.Teller;
+import com.banksystem.enums.BankType;
 import com.banksystem.services.branchManagerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -54,6 +56,10 @@ public class BranchManagerController {
         log.info("Successfully got all tellers for branch ID: {}", branchId);
         return ResponseEntity.ok(ApiResponse.success("Tellers retrieved successfully", tellers));
     }
+
+
+
+
 
     // get pending loan applcaition
 

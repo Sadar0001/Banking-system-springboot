@@ -3,7 +3,6 @@ package com.banksystem.controller;
 import com.banksystem.dto.*;
 import com.banksystem.entity.Branch;
 import com.banksystem.entity.BranchManager;
-import com.banksystem.entity.DebitCardRules;
 import com.banksystem.entity.LoanOffers;
 import com.banksystem.services.HeadBankAdminSerivice;
 import jakarta.validation.Valid;
@@ -12,8 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/headBank")

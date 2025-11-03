@@ -2,7 +2,9 @@ package com.banksystem.controller;
 
 import com.banksystem.dto.ApiResponse;
 import com.banksystem.dto.HeadBankDTO;
+import com.banksystem.entity.ChargesBook;
 import com.banksystem.entity.HeadBank;
+import com.banksystem.enums.BankType;
 import com.banksystem.exception.ResourceNotFoundException;
 import com.banksystem.repository.CentralBankRepository;
 import com.banksystem.repository.HeadBankRepository;
@@ -57,6 +59,60 @@ public class CentralBankAdminController {
         return ResponseEntity.ok(ApiResponse.success("Head banks successfully",headBanks));
 
     }
+
+///***********************************************************************
+// ChargesBook
+// ******************************************/
+//
+//    // add chageesbook
+//    @PostMapping("chargesBook/add")
+//    public ResponseEntity<ApiResponse<ChargesBook>> addCharges(@RequestBody ChargesBook chargesBook){
+//        ChargesBook chargesBook1=centralBankAdminServices.addCharge(chargesBook);
+//        return ResponseEntity.status(HttpStatus.CREATED)
+//                .body(ApiResponse.success("charge successfully" , chargesBook1));
+//    }
+//
+//    // Get all active charges by bank ID and bank type
+//    @GetMapping("chargesBook/bank/{bankId}/type/{bankType}")
+//    public ResponseEntity<ApiResponse<List<ChargesBook>>> getChargesByBankId(@PathVariable Long bankId,@PathVariable BankType bankType) {
+//        List<ChargesBook> charges = centralBankAdminServices.getChargesByBankId(bankId,bankType);
+//        return ResponseEntity.ok(ApiResponse.success("Charges retrieved successfully", charges));
+//    }
+//
+//    // Get all charges (active + inactive) by bank ID
+//    @GetMapping("chargesBook/bank/{bankId}/type/{bankType}/all")
+//    public ResponseEntity<ApiResponse<List<ChargesBook>>> getAllChargesByBankId(@PathVariable Long bankId,@PathVariable BankType bankType) {
+//        List<ChargesBook> charges = centralBankAdminServices.getAllChargesByBankId(bankId,bankType);
+//        return ResponseEntity.ok(ApiResponse.success("All charges retrieved successfully", charges));
+//    }
+//
+//    // Update charges
+//    @PutMapping("chargesBook/update/{id}")
+//    public ResponseEntity<ApiResponse<ChargesBook>> updateCharges(
+//            @PathVariable Long id,
+//            @RequestBody ChargesBook chargesBook) {
+//        ChargesBook updatedCharges = centralBankAdminServices.updateCharge(id, chargesBook);
+//        return ResponseEntity.ok(ApiResponse.success("Charge updated successfully", updatedCharges));
+//    }
+//
+//    // Delete (soft delete - make inactive)
+//    @DeleteMapping("chargesBook/delete/{id}")
+//    public ResponseEntity<ApiResponse<String>> deleteCharges(@PathVariable Long id) {
+//        centralBankAdminServices.deleteCharge(id);
+//        return ResponseEntity.ok(ApiResponse.success("Charge deleted successfully", null));
+//    }
+//
+//    // Get specific charge by ID
+//    @GetMapping("chargesBook/{id}")
+//    public ResponseEntity<ApiResponse<ChargesBook>> getChargeById(@PathVariable Long id) {
+//        ChargesBook charge = centralBankAdminServices.getChargeById(id);
+//        return ResponseEntity.ok(ApiResponse.success("Charge retrieved successfully", charge));
+//    }
+//
+//
+//
+///***********************************************************************
+// ******************************************/
 
 
     // services for central bank customers
