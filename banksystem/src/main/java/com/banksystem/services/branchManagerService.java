@@ -3,10 +3,7 @@ package com.banksystem.services;
 
 import com.banksystem.dto.TellerDTO;
 import com.banksystem.entity.Branch;
-import com.banksystem.entity.ChargesBook;
-import com.banksystem.entity.LoanApplication;
 import com.banksystem.entity.Teller;
-import com.banksystem.enums.BankType;
 import com.banksystem.exception.BusinessRuleException;
 import com.banksystem.repository.BranchRepository;
 import com.banksystem.repository.ChargesBookRepository;

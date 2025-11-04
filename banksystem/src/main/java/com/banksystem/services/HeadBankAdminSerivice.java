@@ -14,6 +14,7 @@ import com.banksystem.repository.branchManagerRepository;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Service
@@ -130,12 +131,12 @@ public class HeadBankAdminSerivice {
     }
 
 
-    public Long getHeadBankEarning(Long headBankId) {
+    public BigDecimal getHeadBankEarning(Long headBankId) {
         HeadBank headBank=headBankRepository.findById(headBankId).orElseThrow(()->new BusinessRuleException("head bank not found with id "+headBankId));
         return headBank.getTotalEarning();
     }
 
-    public Long getBankEarning(Long bankId) {
+    public BigDecimal getBankEarning(Long bankId) {
         Branch branch=branchRepository.findById(bankId).orElseThrow(()->new BusinessRuleException(" bank branch not found with id "+bankId));
         return branch.getTotalEarning();
     }

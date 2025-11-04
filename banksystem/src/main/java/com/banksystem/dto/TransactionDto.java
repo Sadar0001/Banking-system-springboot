@@ -15,6 +15,8 @@ public class TransactionDto {
   private String receiverAccountNumber;
   private BankType bankType;
   private Long bankId;
+//  private Long headBankId;
+//  private Long CentralBankId;
   private TransactionType transactionType;
   private AccountHolderType  accountHolderType;
   private BigDecimal amount;

@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+
 
 @RestController
 @RequestMapping("/api/headBank")
@@ -70,17 +72,17 @@ public class HeadBankAdminController {
 
     //headbank eanrign get
     @GetMapping("/headBank-earning")
-    public ResponseEntity<ApiResponse<Long>> getHeadBankEarnings(@RequestParam Long headBankId) {
+    public ResponseEntity<ApiResponse<BigDecimal>> getHeadBankEarnings(@RequestParam Long headBankId) {
         log.info("Received request to get head bank earnings for ID: {}", headBankId);
-        Long earnings=headBankAdminSerivice.getHeadBankEarning(headBankId);
+        BigDecimal earnings=headBankAdminSerivice.getHeadBankEarning(headBankId);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(ApiResponse.success("Head bank earnings retrieved successfully", earnings));
     }
 
     // get branch earing
     @GetMapping("/bank-earning")
-    public ResponseEntity<ApiResponse<Long>> getBankEarnings(@RequestParam Long bankId) {
+    public ResponseEntity<ApiResponse<BigDecimal>> getBankEarnings(@RequestParam Long bankId) {
         log.info("Received request to get  bank earnings for ID: {}", bankId);
-        Long earnings=headBankAdminSerivice.getBankEarning(bankId);
+        BigDecimal earnings=headBankAdminSerivice.getBankEarning(bankId);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(ApiResponse.success(" bank earnings retrieved successfully", earnings));
     }
 

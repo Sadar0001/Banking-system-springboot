@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -43,7 +44,7 @@ public class Branch {
     private String ifscCode;
 
     @Column(name="total_earning")
-    private Long totalEarning=0L;
+    private BigDecimal totalEarning=BigDecimal.ZERO;
 
     @Column(name = "is_active")
     private Boolean isActive = true;

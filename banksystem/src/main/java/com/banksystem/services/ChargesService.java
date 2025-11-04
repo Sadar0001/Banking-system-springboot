@@ -38,6 +38,7 @@ public class ChargesService {
             Charges c = new Charges();
             c.setBankType(cb.getBankType());
             c.setBankId(cb.getBankId());
+            c.setFeeName(cb.getFeeName());
             c.setChargedAmount(cb.getFeeAmount());
             chargesList.add(c);
         }

@@ -1,19 +1,8 @@
 package com.banksystem.entity;
 
-
-//Charges table
-//id (primary,foriegn key)
-//transaction_id
-//charges_by (enum)
-//charges_amout
-//bank id (forign key)
-//created at
-
-
 import com.banksystem.enums.BankType;
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.time.LocalDateTime;
 
 @Entity
@@ -30,6 +19,10 @@ public class Charges {
     @JoinColumn(name="transaction_id")
     @ManyToOne(fetch=FetchType.LAZY)
     private Transaction transaction;
+
+
+    @Column(name="fee_name", nullable = false)
+    private String feeName;
 
     @Enumerated(EnumType.STRING)
     @Column(name="bank_type")

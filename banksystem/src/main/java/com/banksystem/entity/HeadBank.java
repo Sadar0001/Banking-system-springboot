@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -42,7 +43,7 @@ public class HeadBank {
     private String routingNumber;
 
     @Column(name="total_earning")
-    private Long totalEarning=0L;
+    private BigDecimal totalEarning=BigDecimal.ZERO;
 
     @Column(name = "is_active")
     private Boolean isActive = true;

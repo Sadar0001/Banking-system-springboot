@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +34,7 @@ public class CentralBank {
     private String contactPhone;
 
     @Column(name="total_earning")
-    private Long totalEarning=0L;
+    private BigDecimal totalEarning=BigDecimal.ZERO;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
