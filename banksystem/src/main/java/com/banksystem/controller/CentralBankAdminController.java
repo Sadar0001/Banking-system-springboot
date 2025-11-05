@@ -2,19 +2,14 @@ package com.banksystem.controller;
 
 import com.banksystem.dto.ApiResponse;
 import com.banksystem.dto.HeadBankDTO;
-import com.banksystem.entity.ChargesBook;
 import com.banksystem.entity.HeadBank;
-import com.banksystem.enums.BankType;
-import com.banksystem.exception.ResourceNotFoundException;
 import com.banksystem.repository.CentralBankRepository;
 import com.banksystem.repository.HeadBankRepository;
 import com.banksystem.services.CentralBankAdminServices;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController

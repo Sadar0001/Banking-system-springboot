@@ -728,3 +728,284 @@ VALUES
     (41, 8, 60000.00, 60000.00, 59000.00, 8.75, 48, CURRENT_DATE, DATE_ADD(CURRENT_DATE, INTERVAL 48 MONTH), 'ACTIVE', 1450.00, DATE_ADD(CURRENT_DATE, INTERVAL 20 DAY), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 
+--********************************************
+-- ****************************************************************************************
+-- Insert Sample Transactions with Charges
+-- ****************************************************************************************
+
+-- TRANSFER Transactions (Between different accounts)
+INSERT INTO transactions (from_account_id, to_account_id, transaction_type, amount, currency, description, transaction_reference, total_charges, status, fee_amount, net_amount, transaction_date, created_at)
+VALUES
+    -- Transfer within same branch (Metropolitan Downtown)
+    (1, 3, 'TRANSFER', 5000.00, 'INR', 'Fund transfer to Jane Smith', 'TXN-MHB001-001', 17.50, 'COMPLETED', 17.50, 4982.50, '2025-11-06 10:15:30', '2025-11-06 10:15:30'),
+    (3, 1, 'TRANSFER', 3000.00, 'INR', 'Repayment from Jane Smith', 'TXN-MHB001-002', 12.50, 'COMPLETED', 12.50, 2987.50, '2025-11-06 14:20:15', '2025-11-06 14:20:15'),
+
+    -- Transfer between different head banks
+    (1, 19, 'TRANSFER', 10000.00, 'INR', 'Business payment to Global Trust', 'TXN-MHB001-003', 45.00, 'COMPLETED', 45.00, 9955.00, '2025-11-06 16:45:00', '2025-11-06 16:45:00'),
+    (19, 37, 'TRANSFER', 15000.00, 'INR', 'Vendor payment to United Financial', 'TXN-GTH002-001', 52.50, 'COMPLETED', 52.50, 14947.50, '2025-11-07 09:30:00', '2025-11-07 09:30:00'),
+
+    -- Large value transfers
+    (2, 4, 'TRANSFER', 50000.00, 'INR', 'Business fund transfer', 'TXN-MHB001-004', 125.00, 'COMPLETED', 125.00, 49875.00, '2025-11-07 11:20:45', '2025-11-07 11:20:45'),
+    (20, 23, 'TRANSFER', 75000.00, 'INR', 'Corporate transfer', 'TXN-GTH002-002', 187.50, 'COMPLETED', 187.50, 74812.50, '2025-11-07 14:35:20', '2025-11-07 14:35:20'),
+
+    -- Small value transfers
+    (5, 6, 'TRANSFER', 1000.00, 'INR', 'Personal transfer', 'TXN-MHB001-005', 8.50, 'COMPLETED', 8.50, 991.50, '2025-11-08 08:15:00', '2025-11-08 08:15:00'),
+    (21, 22, 'TRANSFER', 2000.00, 'INR', 'Friend payment', 'TXN-GTH002-003', 11.00, 'COMPLETED', 11.00, 1989.00, '2025-11-08 10:45:30', '2025-11-08 10:45:30');
+
+-- WITHDRAWAL Transactions
+INSERT INTO transactions (from_account_id, to_account_id, transaction_type, amount, currency, description, transaction_reference, total_charges, status, fee_amount, net_amount, transaction_date, created_at)
+VALUES
+    -- ATM Withdrawals
+    (1, NULL, 'WITHDRAWAL', 5000.00, 'INR', 'ATM Cash withdrawal', 'TXN-MHB001-006', 15.00, 'COMPLETED', 15.00, 4985.00, '2025-11-06 12:30:00', '2025-11-06 12:30:00'),
+    (3, NULL, 'WITHDRAWAL', 3000.00, 'INR', 'ATM Withdrawal - Shopping', 'TXN-MHB001-007', 10.00, 'COMPLETED', 10.00, 2990.00, '2025-11-07 15:45:00', '2025-11-07 15:45:00'),
+    (19, NULL, 'WITHDRAWAL', 10000.00, 'INR', 'ATM Cash withdrawal', 'TXN-GTH002-004', 25.00, 'COMPLETED', 25.00, 9975.00, '2025-11-08 11:20:00', '2025-11-08 11:20:00'),
+
+    -- Branch counter withdrawals
+    (2, NULL, 'WITHDRAWAL', 25000.00, 'INR', 'Counter withdrawal - Business', 'TXN-MHB001-008', 35.00, 'COMPLETED', 35.00, 24965.00, '2025-11-07 10:15:00', '2025-11-07 10:15:00'),
+    (20, NULL, 'WITHDRAWAL', 15000.00, 'INR', 'Counter withdrawal', 'TXN-GTH002-005', 27.50, 'COMPLETED', 27.50, 14972.50, '2025-11-08 14:30:00', '2025-11-08 14:30:00');
+
+-- DEPOSIT Transactions
+INSERT INTO transactions (from_account_id, to_account_id, transaction_type, amount, currency, description, transaction_reference, total_charges, status, fee_amount, net_amount, transaction_date, created_at)
+VALUES
+    -- Cash deposits
+    (NULL, 1, 'DEPOSIT', 20000.00, 'INR', 'Cash deposit - Business', 'TXN-MHB001-009', 12.50, 'COMPLETED', 12.50, 19887.50, '2025-11-06 09:15:00', '2025-11-06 09:15:00'),
+    (NULL, 3, 'DEPOSIT', 15000.00, 'INR', 'Cash deposit - Salary', 'TXN-MHB001-010', 10.00, 'COMPLETED', 10.00, 14990.00, '2025-11-07 16:20:00', '2025-11-07 16:20:00'),
+    (NULL, 19, 'DEPOSIT', 30000.00, 'INR', 'Cash deposit - Business', 'TXN-GTH002-006', 18.75, 'COMPLETED', 18.75, 29981.25, '2025-11-08 13:45:00', '2025-11-08 13:45:00'),
+
+    -- Check deposits
+    (NULL, 2, 'DEPOSIT', 50000.00, 'INR', 'Check deposit - Client payment', 'TXN-MHB001-011', 22.50, 'COMPLETED', 22.50, 49977.50, '2025-11-07 11:30:00', '2025-11-07 11:30:00'),
+    (NULL, 20, 'DEPOSIT', 25000.00, 'INR', 'Check deposit', 'TXN-GTH002-007', 15.00, 'COMPLETED', 15.00, 24985.00, '2025-11-08 15:20:00', '2025-11-08 15:20:00');
+
+-- BILL_PAYMENT Transactions
+INSERT INTO transactions (from_account_id, to_account_id, transaction_type, amount, currency, description, transaction_reference, total_charges, status, fee_amount, net_amount, transaction_date, created_at)
+VALUES
+    -- Utility bill payments
+    (1, NULL, 'BILL_PAYMENT', 2500.00, 'INR', 'Electricity bill payment', 'TXN-MHB001-012', 8.50, 'COMPLETED', 8.50, 2491.50, '2025-11-06 17:30:00', '2025-11-06 17:30:00'),
+    (3, NULL, 'BILL_PAYMENT', 1800.00, 'INR', 'Water bill payment', 'TXN-MHB001-013', 7.25, 'COMPLETED', 7.25, 1792.75, '2025-11-07 18:15:00', '2025-11-07 18:15:00'),
+    (19, NULL, 'BILL_PAYMENT', 3500.00, 'INR', 'Internet bill payment', 'TXN-GTH002-008', 11.50, 'COMPLETED', 11.50, 3488.50, '2025-11-08 16:45:00', '2025-11-08 16:45:00'),
+
+    -- Credit card payments
+    (2, NULL, 'BILL_PAYMENT', 15000.00, 'INR', 'Credit card payment', 'TXN-MHB001-014', 25.00, 'COMPLETED', 25.00, 14975.00, '2025-11-07 19:20:00', '2025-11-07 19:20:00'),
+    (20, NULL, 'BILL_PAYMENT', 12000.00, 'INR', 'Credit card payment', 'TXN-GTH002-009', 20.00, 'COMPLETED', 20.00, 11980.00, '2025-11-08 17:30:00', '2025-11-08 17:30:00');
+
+-- LOAN_REPAYMENT Transactions
+INSERT INTO transactions (from_account_id, to_account_id, transaction_type, amount, currency, description, transaction_reference, total_charges, status, fee_amount, net_amount, transaction_date, created_at)
+VALUES
+    -- Loan EMI payments
+    (1, NULL, 'LOAN_REPAYMENT', 2450.00, 'INR', 'Home loan EMI payment', 'TXN-MHB001-015', 12.25, 'COMPLETED', 12.25, 2437.75, '2025-11-06 10:00:00', '2025-11-06 10:00:00'),
+    (3, NULL, 'LOAN_REPAYMENT', 950.00, 'INR', 'Personal loan EMI', 'TXN-MHB001-016', 8.50, 'COMPLETED', 8.50, 941.50, '2025-11-07 10:00:00', '2025-11-07 10:00:00'),
+    (19, NULL, 'LOAN_REPAYMENT', 1900.00, 'INR', 'Business loan EMI', 'TXN-GTH002-010', 10.75, 'COMPLETED', 10.75, 1889.25, '2025-11-08 10:00:00', '2025-11-08 10:00:00');
+
+-- PENDING and FAILED Transactions for demonstration
+INSERT INTO transactions (from_account_id, to_account_id, transaction_type, amount, currency, description, transaction_reference, total_charges, status, fee_amount, net_amount, transaction_date, created_at)
+VALUES
+    -- Pending transactions
+    (1, 5, 'TRANSFER', 8000.00, 'INR', 'Pending transfer', 'TXN-MHB001-017', 20.00, 'PENDING', 20.00, 7980.00, '2025-11-09 09:00:00', '2025-11-09 09:00:00'),
+    (19, 21, 'TRANSFER', 12000.00, 'INR', 'Pending business transfer', 'TXN-GTH002-011', 30.00, 'PENDING', 30.00, 11970.00, '2025-11-09 10:30:00', '2025-11-09 10:30:00'),
+
+    -- Failed transactions
+    (3, NULL, 'WITHDRAWAL', 20000.00, 'INR', 'Failed withdrawal - Limit exceeded', 'TXN-MHB001-018', 0.00, 'FAILED', 0.00, 20000.00, '2025-11-09 11:45:00', '2025-11-09 11:45:00'),
+    (20, NULL, 'TRANSFER', 50000.00, 'INR', 'Failed transfer - Insufficient funds', 'TXN-GTH002-012', 0.00, 'FAILED', 0.00, 50000.00, '2025-11-09 14:20:00', '2025-11-09 14:20:00');
+
+-- ****************************************************************************************
+-- Insert Charges for Transactions
+-- ****************************************************************************************
+
+-- Charges for TRANSFER transactions
+INSERT INTO charges (transaction_id, fee_name, bank_type, charged_amount, bank_id, created_at)
+VALUES
+    -- Transfer TXN-MHB001-001 (5000 INR)
+    (1, 'Metro Transfer Fee - Domestic', 'HEAD_BANK', 1.50, 1, '2025-11-06 10:15:30'),
+    (1, 'Central Processing Fee', 'CENTRAL_BANK', 1.00, 1, '2025-11-06 10:15:30'),
+    (1, 'Branch Counter Service Fee', 'BANK_BRANCH', 15.00, 1, '2025-11-06 10:15:30'),
+
+    -- Transfer TXN-MHB001-003 (10000 INR - Inter-bank)
+    (3, 'Metro Transfer Fee - International', 'HEAD_BANK', 15.00, 1, '2025-11-06 16:45:00'),
+    (3, 'Inter-Bank Transfer Fee', 'CENTRAL_BANK', 2.50, 1, '2025-11-06 16:45:00'),
+    (3, 'Cross Border Fee', 'CENTRAL_BANK', 2.50, 1, '2025-11-06 16:45:00'),
+    (3, 'Branch Processing Fee', 'BANK_BRANCH', 25.00, 1, '2025-11-06 16:45:00'),
+
+    -- Transfer TXN-GTH002-001 (15000 INR - Inter-bank)
+    (4, 'Global Transfer Fee - Express', 'HEAD_BANK', 5.00, 2, '2025-11-07 09:30:00'),
+    (4, 'Inter-Bank Transfer Fee', 'CENTRAL_BANK', 2.50, 1, '2025-11-07 09:30:00'),
+    (4, 'Foreign Currency Fee', 'HEAD_BANK', 45.00, 2, '2025-11-07 09:30:00'),
+
+    -- Large Transfer TXN-MHB001-004 (50000 INR)
+    (5, 'Metro Transfer Fee - Domestic', 'HEAD_BANK', 1.50, 1, '2025-11-07 11:20:45'),
+    (5, 'Large Transfer Surcharge', 'CENTRAL_BANK', 50.00, 1, '2025-11-07 11:20:45'),
+    (5, 'Branch Counter Service Fee', 'BANK_BRANCH', 73.50, 1, '2025-11-07 11:20:45'),
+
+    -- Small Transfer TXN-MHB001-005 (1000 INR)
+    (7, 'Small Transfer Fee', 'HEAD_BANK', 0.25, 2, '2025-11-08 08:15:00'),
+    (7, 'Micro Transaction Fee', 'CENTRAL_BANK', 0.10, 1, '2025-11-08 08:15:00'),
+    (7, 'Branch Processing Fee', 'BANK_BRANCH', 8.15, 1, '2025-11-08 08:15:00');
+
+-- Charges for WITHDRAWAL transactions
+INSERT INTO charges (transaction_id, fee_name, bank_type, charged_amount, bank_id, created_at)
+VALUES
+    -- Withdrawal TXN-MHB001-006 (5000 INR - ATM)
+    (9, 'Metro Withdrawal Fee - Other ATM', 'HEAD_BANK', 2.00, 1, '2025-11-06 12:30:00'),
+    (9, 'Central Bank Withdrawal Fee', 'CENTRAL_BANK', 0.25, 1, '2025-11-06 12:30:00'),
+    (9, 'Branch Cash Withdrawal Fee', 'BANK_BRANCH', 12.75, 1, '2025-11-06 12:30:00'),
+
+    -- Withdrawal TXN-MHB001-008 (25000 INR - Counter)
+    (12, 'Metro Withdrawal Fee - Other ATM', 'HEAD_BANK', 2.00, 1, '2025-11-07 10:15:00'),
+    (12, 'Central Bank Withdrawal Fee', 'CENTRAL_BANK', 1.25, 1, '2025-11-07 10:15:00'),
+    (12, 'Branch Cash Withdrawal Fee', 'BANK_BRANCH', 31.75, 1, '2025-11-07 10:15:00'),
+
+    -- Withdrawal TXN-GTH002-005 (15000 INR - Counter)
+    (13, 'Global Withdrawal Fee - Domestic', 'HEAD_BANK', 1.50, 2, '2025-11-08 14:30:00'),
+    (13, 'Central Bank Withdrawal Fee', 'CENTRAL_BANK', 0.75, 1, '2025-11-08 14:30:00'),
+    (13, 'City Center Cash Handling Fee', 'BANK_BRANCH', 25.25, 4, '2025-11-08 14:30:00');
+
+-- Charges for DEPOSIT transactions
+INSERT INTO charges (transaction_id, fee_name, bank_type, charged_amount, bank_id, created_at)
+VALUES
+    -- Deposit TXN-MHB001-009 (20000 INR - Cash)
+    (14, 'Global Deposit Fee - Cash', 'HEAD_BANK', 0.50, 2, '2025-11-06 09:15:00'),
+    (14, 'Branch Cash Deposit Fee', 'BANK_BRANCH', 12.00, 1, '2025-11-06 09:15:00'),
+
+    -- Deposit TXN-MHB001-011 (50000 INR - Check)
+    (17, 'Branch Check Processing Fee', 'BANK_BRANCH', 5.00, 1, '2025-11-07 11:30:00'),
+    (17, 'Central Processing Fee', 'CENTRAL_BANK', 1.00, 1, '2025-11-07 11:30:00'),
+    (17, 'Branch Service Fee', 'BANK_BRANCH', 16.50, 1, '2025-11-07 11:30:00'),
+
+    -- Deposit TXN-GTH002-007 (25000 INR - Check)
+    (18, 'Branch Check Processing Fee', 'BANK_BRANCH', 5.00, 4, '2025-11-08 15:20:00'),
+    (18, 'City Center Service Fee', 'BANK_BRANCH', 10.00, 4, '2025-11-08 15:20:00');
+
+-- Charges for BILL_PAYMENT transactions
+INSERT INTO charges (transaction_id, fee_name, bank_type, charged_amount, bank_id, created_at)
+VALUES
+    -- Bill Payment TXN-MHB001-012 (2500 INR)
+    (19, 'Metro Bill Payment Fee', 'HEAD_BANK', 1.00, 1, '2025-11-06 17:30:00'),
+    (19, 'Central Processing Fee', 'CENTRAL_BANK', 1.00, 1, '2025-11-06 17:30:00'),
+    (19, 'Branch Service Fee', 'BANK_BRANCH', 6.50, 1, '2025-11-06 17:30:00'),
+
+    -- Bill Payment TXN-GTH002-008 (3500 INR)
+    (21, 'United Bill Payment Convenience Fee', 'HEAD_BANK', 2.50, 3, '2025-11-08 16:45:00'),
+    (21, 'Central Processing Fee', 'CENTRAL_BANK', 1.00, 1, '2025-11-08 16:45:00'),
+    (21, 'Main Branch Bill Payment Fee', 'BANK_BRANCH', 8.00, 7, '2025-11-08 16:45:00'),
+
+    -- Credit Card Payment TXN-MHB001-014 (15000 INR)
+    (23, 'Metro Bill Payment Fee', 'HEAD_BANK', 1.00, 1, '2025-11-07 19:20:00'),
+    (23, 'Premium Service Fee', 'HEAD_BANK', 30.00, 3, '2025-11-07 19:20:00'),
+    (23, 'Branch Processing Fee', 'BANK_BRANCH', -6.00, 1, '2025-11-07 19:20:00'); -- Negative fee for demonstration
+
+-- Charges for LOAN_REPAYMENT transactions
+INSERT INTO charges (transaction_id, fee_name, bank_type, charged_amount, bank_id, created_at)
+VALUES
+    -- Loan Repayment TXN-MHB001-015 (2450 INR)
+    (25, 'Global Loan Service Fee', 'HEAD_BANK', 0.75, 2, '2025-11-06 10:00:00'),
+    (25, 'Central Processing Fee', 'CENTRAL_BANK', 1.00, 1, '2025-11-06 10:00:00'),
+    (25, 'Main Branch Loan Service Charge', 'BANK_BRANCH', 10.50, 7, '2025-11-06 10:00:00'),
+
+    -- Loan Repayment TXN-GTH002-010 (1900 INR)
+    (27, 'Global Loan Service Fee', 'HEAD_BANK', 0.75, 2, '2025-11-08 10:00:00'),
+    (27, 'Central Processing Fee', 'CENTRAL_BANK', 1.00, 1, '2025-11-08 10:00:00'),
+    (27, 'City Center Document Fee', 'BANK_BRANCH', 9.00, 4, '2025-11-08 10:00:00');
+
+-- Charges for PENDING transactions (will be applied when completed)
+INSERT INTO charges (transaction_id, fee_name, bank_type, charged_amount, bank_id, created_at)
+VALUES
+    -- Pending Transfer TXN-MHB001-017
+    (29, 'Metro Transfer Fee - Domestic', 'HEAD_BANK', 1.50, 1, '2025-11-09 09:00:00'),
+    (29, 'Central Processing Fee', 'CENTRAL_BANK', 1.00, 1, '2025-11-09 09:00:00'),
+    (29, 'Branch Counter Service Fee', 'BANK_BRANCH', 17.50, 1, '2025-11-09 09:00:00');
+
+-- ****************************************************************************************
+-- Update account balances based on transactions (for COMPLETED transactions only)
+-- Using MySQL compatible syntax
+-- ****************************************************************************************
+
+-- Update FROM account balances for transfers and withdrawals
+UPDATE account a
+    JOIN transactions t ON a.id = t.from_account_id
+    SET
+        a.current_balance = a.current_balance - (t.amount + t.total_charges),
+        a.available_balance = a.available_balance - (t.amount + t.total_charges)
+WHERE t.status = 'COMPLETED'
+  AND t.transaction_type IN ('TRANSFER', 'WITHDRAWAL', 'BILL_PAYMENT', 'LOAN_REPAYMENT');
+
+-- Update TO account balances for transfers and deposits
+UPDATE account a
+    JOIN transactions t ON a.id = t.to_account_id
+    SET
+        a.current_balance = a.current_balance + (t.amount - t.total_charges),
+        a.available_balance = a.available_balance + (t.amount - t.total_charges)
+WHERE t.status = 'COMPLETED'
+  AND t.transaction_type IN ('TRANSFER', 'DEPOSIT');
+
+-- ****************************************************************************************
+-- Update bank earnings based on charges
+-- ****************************************************************************************
+
+-- Update Central Bank earnings
+UPDATE central_bank
+SET total_earning = total_earning + (
+    SELECT COALESCE(SUM(charged_amount), 0)
+    FROM charges
+    WHERE bank_type = 'CENTRAL_BANK'
+      AND created_at >= '2025-11-06 00:00:00'
+)
+WHERE id = 1;
+
+-- Update Head Bank earnings for Metropolitan Head Bank (ID: 1)
+UPDATE head_bank
+SET total_earning = total_earning + (
+    SELECT COALESCE(SUM(charged_amount), 0)
+    FROM charges
+    WHERE bank_type = 'HEAD_BANK' AND bank_id = 1
+      AND created_at >= '2025-11-06 00:00:00'
+)
+WHERE id = 1;
+
+-- Update Head Bank earnings for Global Trust Head Bank (ID: 2)
+UPDATE head_bank
+SET total_earning = total_earning + (
+    SELECT COALESCE(SUM(charged_amount), 0)
+    FROM charges
+    WHERE bank_type = 'HEAD_BANK' AND bank_id = 2
+      AND created_at >= '2025-11-06 00:00:00'
+)
+WHERE id = 2;
+
+-- Update Head Bank earnings for United Financial Head Bank (ID: 3)
+UPDATE head_bank
+SET total_earning = total_earning + (
+    SELECT COALESCE(SUM(charged_amount), 0)
+    FROM charges
+    WHERE bank_type = 'HEAD_BANK' AND bank_id = 3
+      AND created_at >= '2025-11-06 00:00:00'
+)
+WHERE id = 3;
+
+-- Update Branch earnings for Metropolitan Downtown Branch (ID: 1)
+UPDATE branch
+SET total_earning = total_earning + (
+    SELECT COALESCE(SUM(charged_amount), 0)
+    FROM charges
+    WHERE bank_type = 'BANK_BRANCH' AND bank_id = 1
+      AND created_at >= '2025-11-06 00:00:00'
+)
+WHERE id = 1;
+
+-- Update Branch earnings for Global Trust City Center (ID: 4)
+UPDATE branch
+SET total_earning = total_earning + (
+    SELECT COALESCE(SUM(charged_amount), 0)
+    FROM charges
+    WHERE bank_type = 'BANK_BRANCH' AND bank_id = 4
+      AND created_at >= '2025-11-06 00:00:00'
+)
+WHERE id = 4;
+
+-- Update Branch earnings for United Financial Main Branch (ID: 7)
+UPDATE branch
+SET total_earning = total_earning + (
+    SELECT COALESCE(SUM(charged_amount), 0)
+    FROM charges
+    WHERE bank_type = 'BANK_BRANCH' AND bank_id = 7
+      AND created_at >= '2025-11-06 00:00:00'
+)
+WHERE id = 7;
