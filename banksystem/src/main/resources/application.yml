@@ -16,10 +16,9 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
         format_sql: true
-    defer-datasource-initialization: true  # THIS IS CRITICAL!
+    defer-datasource-initialization: true
 
   sql:
     init:
       mode: always
       data-locations: classpath:data.sql
-      # Remove schema-locations since JPA handles schema creation

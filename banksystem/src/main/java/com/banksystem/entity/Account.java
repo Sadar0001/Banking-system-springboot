@@ -70,6 +70,8 @@ public class Account {
     private LocalDateTime updatedAt = LocalDateTime.now();
 
 
+    @Version
+    private Integer version=0;
 
     @OneToMany(mappedBy = "fromAccount")
     @JsonIgnore
