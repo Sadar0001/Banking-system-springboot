@@ -50,9 +50,6 @@ public class Customer {
     @Column(name = "pan_number", unique = true, length = 20)
     private String panNumber;
 
-//    @Enumerated(EnumType.STRING)
-//    @Column(name = "kyc_status", length = 20)
-//    private KycStatus kycStatus = KycStatus.PENDING;
 
     @Column(name = "is_active")
     private Boolean isActive = true;
@@ -67,22 +64,22 @@ public class Customer {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt = LocalDateTime.now();
 
-//    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
-//    @JsonIgnore
-//    private List<Account> accounts;
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Account> accounts;
 
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<LoanApplication> loanApplications;
 
-//    @OneToMany(mappedBy = "requestedBy")
-//    @JsonIgnore
-//    private List<CardRequest> cardRequests;
+    @OneToMany(mappedBy = "requestedBy")
+    @JsonIgnore
+    private List<CardRequest> cardRequests;
 
     @Column(name = "pin_locked_until")
     private LocalDateTime pinLockedUntil;
 
-//    @OneToMany(mappedBy = "requestedBy")
-//    @JsonIgnore
-//    private List<ChequeBookRequest> chequeBookRequests;
+    @OneToMany(mappedBy = "requestedBy")
+    @JsonIgnore
+    private List<ChequeBookRequest> chequeBookRequests;
 }

@@ -1,7 +1,11 @@
+
 package com.banksystem.repository;
 
 import com.banksystem.entity.LoanOffers;
 import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.List;
 
-public interface LoanOffersRepository extends JpaRepository<LoanOffers,Long> {
+public interface LoanOffersRepository extends JpaRepository<LoanOffers, Long> {
+
+    List<LoanOffers> findByHeadBankIdAndIsActiveTrue(Long headBankId);
 }

@@ -37,6 +37,7 @@ public class CentralBankAdminServices {
         this.chargesBookRepository = chargesBookRepository;
     }
 
+    @Transactional
     public HeadBank addHeadBank( HeadBankDTO headBankDTO){
 
         CentralBank centralBank = centralBankRepository.findById(headBankDTO.getCentralBankId())

@@ -1,7 +1,4 @@
-
-
 package com.banksystem.entity;
-
 
 import com.banksystem.enums.TransactionStatus;
 import com.banksystem.enums.TransactionType;

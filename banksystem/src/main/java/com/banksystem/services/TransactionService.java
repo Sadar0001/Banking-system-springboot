@@ -139,7 +139,9 @@ public class TransactionService {
     /**
      * Helper method to create TransactionDto for each bank level
      */
-    private TransactionDto createTransactionDto(TransactionDto original, Long bankId, BankType bankType) {
+
+    @Transactional
+    public TransactionDto createTransactionDto(TransactionDto original, Long bankId, BankType bankType) {
         TransactionDto dto = new TransactionDto();
         dto.setSenderAccountNumber(original.getSenderAccountNumber());
         dto.setReceiverAccountNumber(original.getReceiverAccountNumber());
@@ -156,7 +158,9 @@ public class TransactionService {
     /**
      * Distributes transaction charges to Central Bank, Head Bank, and Branch
      */
-    private void distributeChargesToBanks(List<Charges> charges) {
+
+    @Transactional
+    public void distributeChargesToBanks(List<Charges> charges) {
         for (Charges charge : charges) {
             BigDecimal chargeAmount = BigDecimal.valueOf(charge.getChargedAmount());
 

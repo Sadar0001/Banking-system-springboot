@@ -2,22 +2,11 @@ package com.banksystem.entity;
 
 import com.banksystem.enums.BankType;
 import com.banksystem.enums.TransactionType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
-
-//id (primary,foriegn key)
-//fee_name
-//bank id (forign key)
-//bank type (enum- central,brnach,head)
-//trnascationtype (enum ,saving,current,loan)
-//min_value
-//        max_value
-//fee_charge
-//is active
-//created at
-//updataed at
 
 @Entity
 @Table(name="charges_book")
@@ -55,6 +44,7 @@ public class ChargesBook {
 
     @Column(name="is_active")
     private boolean isActive=true;
+
 
     @Column(name="created_at",updatable = false)
     private LocalDateTime createdAt=LocalDateTime.now();

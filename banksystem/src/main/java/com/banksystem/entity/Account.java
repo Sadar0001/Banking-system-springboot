@@ -80,15 +80,15 @@ public class Account {
     private List<Transaction> incomingTransactions;
 
 
-//    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
-//    @JsonIgnore
-//    private List<DebitCard> debitCards;
-//
-//    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
-//    @JsonIgnore
-//    private List<CardRequest> cardRequests;
-//
-//    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
-//    @JsonIgnore
-//    private List<ChequeBookRequest> chequeBookRequests;
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<DebitCard> debitCards;
+
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<CardRequest> cardRequests;
+
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<ChequeBookRequest> chequeBookRequests;
 }

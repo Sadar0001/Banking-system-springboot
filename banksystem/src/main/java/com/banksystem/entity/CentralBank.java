@@ -45,20 +45,10 @@ public class CentralBank {
     @OneToMany(mappedBy = "centralBank", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<CentralBankAdmin> admins=  new ArrayList<>();
-//
-//    @OneToMany(mappedBy = "centralBank", cascade = CascadeType.ALL)
-//    @JsonIgnore
-//    private List<SystemConfig> systemConfigs;
-//
-//    @OneToMany(mappedBy = "centralBank", cascade = CascadeType.ALL)
-//    @JsonIgnore
-//    private List<TransactionLimits> transactionLimits;
-//
+
+
     @OneToMany(mappedBy = "centralBank", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<HeadBank> headBanks=new ArrayList<>();
-//
-//    @OneToMany(mappedBy = "centralBank", cascade = CascadeType.ALL)
-//    @JsonIgnore
-//    private List<CentralBankEarnings> earnings;
+
 }

@@ -54,27 +54,22 @@ public class HeadBank {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt = LocalDateTime.now();
 
-//    @OneToMany(mappedBy = "headBank", cascade = CascadeType.ALL)
-//    @JsonIgnore
-//    private List<HeadBankAdmin> admins;
-//
-//    @OneToMany(mappedBy = "headBank", cascade = CascadeType.ALL)
-//    @JsonIgnore
-//    private List<LoanOffers> loanOffers;
-//
-//    @OneToMany(mappedBy = "headBank", cascade = CascadeType.ALL)
-//    @JsonIgnore
-//    private List<DebitCardRules> debitCardRules;
-//
-//    @OneToMany(mappedBy = "headBank", cascade = CascadeType.ALL)
-//    @JsonIgnore
-//    private List<BankFees> bankFees;
+    @OneToMany(mappedBy = "headBank", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<HeadBankAdmin> admins;
+
+    @OneToMany(mappedBy = "headBank", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<LoanOffers> loanOffers;
+
+    @OneToMany(mappedBy = "headBank", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<DebitCardRules> debitCardRules;
+
+
 
     @OneToMany(mappedBy = "headBank", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Branch> branches;
-//
-//    @OneToMany(mappedBy = "headBank", cascade = CascadeType.ALL)
-//    @JsonIgnore
-//    private List<HeadBankEarnings> earnings;
+
 }

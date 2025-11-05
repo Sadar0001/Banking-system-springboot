@@ -5,6 +5,7 @@ import com.banksystem.enums.BankType;
 import com.banksystem.exception.BusinessRuleException;
 import com.banksystem.repository.ChargesBookRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -19,6 +20,7 @@ public class ChargesBookService {
         this.chargesBookRepository = chargesBookRepository;
     }
 
+    @Transactional
     public ChargesBook addCharge(ChargesBook chargesBook) {
         ChargesBook chargesBook1=new ChargesBook();
 
@@ -54,6 +56,7 @@ public class ChargesBookService {
     }
 
     // Update
+    @Transactional
     public ChargesBook updateCharge(Long id, ChargesBook chargesBook) {
         ChargesBook existingCharge = chargesBookRepository.findById(id)
                 .orElseThrow(() -> new BusinessRuleException("Charge not found with id: " + id));
@@ -83,6 +86,7 @@ public class ChargesBookService {
     }
 
     // Soft Delete
+    @Transactional
     public void deleteCharge(Long id) {
         ChargesBook existingCharge = chargesBookRepository.findById(id)
                 .orElseThrow(() -> new BusinessRuleException("Charge not found with id: " + id));

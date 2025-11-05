@@ -62,16 +62,14 @@ public class Branch {
     @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Teller> tellers;
-//
-//    @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL)
-//    @JsonIgnore
-//    private List<Customer> customers;
-//
-//    @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL)
-//    @JsonIgnore
-//    private List<Account> accounts;
-//
-//    @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL)
-//    @JsonIgnore
-//    private List<BranchEarnings> earnings;
+
+    @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Customer> customers;
+
+    @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Account> accounts;
+
+
 }

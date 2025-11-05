@@ -49,11 +49,11 @@ public class Teller {
     @Column(name = "last_login")
     private LocalDateTime lastLogin;
 
-//    @OneToMany(mappedBy = "processedBy")
-//    @JsonIgnore
-//    private List<CardRequest> processedCardRequests;
-//
-//    @OneToMany(mappedBy = "processedBy")
-//    @JsonIgnore
-//    private List<ChequeBookRequest> processedChequeBookRequests;
+    @OneToMany(mappedBy = "processedBy")
+    @JsonIgnore
+    private List<CardRequest> processedCardRequests;
+
+    @OneToMany(mappedBy = "processedBy")
+    @JsonIgnore
+    private List<ChequeBookRequest> processedChequeBookRequests;
 }

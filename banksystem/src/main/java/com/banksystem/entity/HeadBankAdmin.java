@@ -7,22 +7,21 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
-@Table(name = "branch_manager")
+@Table(name = "head_bank_admin")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class BranchManager {
+public class HeadBankAdmin {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "branch_id", nullable = false)
+    @JoinColumn(name = "head_bank_id", nullable = false)
     @JsonIgnore
-    private Branch branch;
+    private HeadBank headBank;
 
     @Column(nullable = false, unique = true, length = 100)
     private String username;
@@ -37,7 +36,7 @@ public class BranchManager {
     private String fullName;
 
     @Column(length = 50)
-    private String role = "branch_manager";
+    private String role = "head_bank_admin";
 
     @Column(name = "is_active")
     private Boolean isActive = true;
@@ -47,9 +46,4 @@ public class BranchManager {
 
     @Column(name = "last_login")
     private LocalDateTime lastLogin;
-
-    @OneToMany(mappedBy = "approvedBy")
-    @JsonIgnore
-    private List<LoanApplication> approvedLoanApplications;
-
 }

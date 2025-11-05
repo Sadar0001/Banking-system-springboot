@@ -13,6 +13,7 @@ import com.banksystem.repository.LoanOffersRepository;
 import com.banksystem.repository.branchManagerRepository;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -32,6 +33,7 @@ public class HeadBankAdminSerivice {
         this.loanOffersRepository = loanOffersRepository;
     }
 
+    @Transactional
     public Branch addBranch(BranchDTO branchDTO){
         // if head bank exist
         // if branch already exist
@@ -60,6 +62,7 @@ public class HeadBankAdminSerivice {
 
     }
 
+    @Transactional
     public void deactivateBranch(long branchId) {
         // find deactivate bidirection save
        Branch branch=branchRepository.findById(branchId).orElseThrow(()-> new BusinessRuleException("branch not found with id "+branchId));
@@ -70,6 +73,7 @@ public class HeadBankAdminSerivice {
 
     }
 
+    @Transactional
     public BranchManager addBranchManager(@Valid BranchManagerDTO managerDTO) {
         // add if adready manager exist in this
         // add save return
@@ -88,6 +92,7 @@ public class HeadBankAdminSerivice {
     }
 
 
+    @Transactional
     public void addLoanOffer(LoanOfferDTO offerDTO) {
         // head bank exist
         // add bidifrectional  return
@@ -110,6 +115,7 @@ public class HeadBankAdminSerivice {
     }
 
 
+    @Transactional
     public LoanOffers updateLoanOffer(Long offerId, LoanOfferDTO offerDTO) {
 
 

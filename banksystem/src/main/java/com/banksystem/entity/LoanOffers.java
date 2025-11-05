@@ -44,7 +44,7 @@ public class LoanOffers {
     @Column(name = "max_tenure_months", nullable = false)
     private Integer maxTenureMonths;
 
-    @Column(name = "eligibility_criteria", columnDefinition = "jsonb")
+    @Column(name = "eligibility_criteria")
     private String eligibilityCriteria;
 
     @Column(name = "is_active")
@@ -62,11 +62,11 @@ public class LoanOffers {
     private LoanType loanType;
 
 
-//    @OneToMany(mappedBy = "loanOffer", cascade = CascadeType.ALL)
-//    @JsonIgnore
-//    private List<LoanAccount> loanAccounts;
-//
-//    @OneToMany(mappedBy = "loanOffer", cascade = CascadeType.ALL)
-//    @JsonIgnore
-//    private List<LoanApplication> loanApplications;
+    @OneToMany(mappedBy = "loanOffer", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<LoanAccount> loanAccounts;
+
+    @OneToMany(mappedBy = "loanOffer", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<LoanApplication> loanApplications;
 }
