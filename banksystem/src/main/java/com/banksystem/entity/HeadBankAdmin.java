@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "head_bank_admin")
@@ -46,4 +47,5 @@ public class HeadBankAdmin {
 
     @Column(name = "last_login")
     private LocalDateTime lastLogin;
+
 }

@@ -1,6 +1,5 @@
 package com.banksystem.controller;
 
-
 import com.banksystem.dto.ApiResponse;
 import com.banksystem.entity.ChargesBook;
 import com.banksystem.enums.BankType;
@@ -8,7 +7,6 @@ import com.banksystem.services.ChargesBookService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
@@ -60,13 +58,10 @@ public class ChargesBookController {
         return ResponseEntity.ok(ApiResponse.success("Charge deleted successfully", null));
     }
 
-    // Get specific charge by ID
+
     @GetMapping("chargesBook/{id}")
     public ResponseEntity<ApiResponse<ChargesBook>> getChargeById(@PathVariable Long id) {
         ChargesBook charge = chargesBookService.getChargeById(id);
         return ResponseEntity.ok(ApiResponse.success("Charge retrieved successfully", charge));
     }
-
-
-
 }

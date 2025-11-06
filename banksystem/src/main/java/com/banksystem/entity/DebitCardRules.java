@@ -20,10 +20,6 @@ public class DebitCardRules {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "head_bank_id", nullable = false)
-    @JsonIgnore
-    private HeadBank headBank;
 
     @Column(name = "card_type", nullable = false, length = 100)
     private String cardType;
@@ -46,7 +42,9 @@ public class DebitCardRules {
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
 
-//    @OneToMany(mappedBy = "debitCardRules", cascade = CascadeType.ALL)
-//    @JsonIgnore
-//    private List<DebitCard> debitCards;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "head_bank_id", nullable = false)
+    @JsonIgnore
+    private HeadBank headBank;
+
 }

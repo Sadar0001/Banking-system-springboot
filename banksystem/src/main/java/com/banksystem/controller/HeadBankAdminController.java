@@ -1,17 +1,24 @@
 package com.banksystem.controller;
 
 import com.banksystem.dto.*;
-import com.banksystem.entity.Branch;
-import com.banksystem.entity.BranchManager;
-import com.banksystem.entity.LoanOffers;
+import com.banksystem.entity.*;
+import com.banksystem.enums.BankType;
+import com.banksystem.exception.ResourceNotFoundException;
+import com.banksystem.repository.HeadBankRepository;
+import com.banksystem.services.ChargesService;
+import com.banksystem.services.DebitCardRulesService;
 import com.banksystem.services.HeadBankAdminSerivice;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -19,45 +26,52 @@ import java.math.BigDecimal;
 @Slf4j
 public class HeadBankAdminController {
     private final HeadBankAdminSerivice headBankAdminSerivice;
+    private final ChargesService chargesService;
+    private final HeadBankRepository headBankRepository;
+    private final DebitCardRulesService debitCardRulesService;
 
-    public HeadBankAdminController(HeadBankAdminSerivice headBankAdminSerivice) {
+    public HeadBankAdminController(HeadBankAdminSerivice headBankAdminSerivice, ChargesService chargesService, HeadBankRepository headBankRepository, DebitCardRulesService debitCardRulesService) {
         this.headBankAdminSerivice = headBankAdminSerivice;
+        this.chargesService = chargesService;
+        this.headBankRepository = headBankRepository;
+        this.debitCardRulesService = debitCardRulesService;
     }
     // ad branch
 
     @PostMapping("add_branch")
-    public ResponseEntity<ApiResponse<Branch>> addBranch(@RequestBody BranchDTO branchDTO){
-        log.info("Adding branch to head Bank {}:",branchDTO.getBranchCode());
-        Branch branch=headBankAdminSerivice.addBranch(branchDTO);
-        log.info("successfully created branch {}:",branch.getBranchCode());
+    public ResponseEntity<ApiResponse<Branch>> addBranch(@RequestBody BranchDTO branchDTO) {
+        log.info("Adding branch to head Bank {}:", branchDTO.getBranchCode());
+        Branch branch = headBankAdminSerivice.addBranch(branchDTO);
+        log.info("successfully created branch {}:", branch.getBranchCode());
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                .body(ApiResponse.success("Branch deactivated successfully",null));
+                .body(ApiResponse.success("Branch deactivated successfully", null));
     }
 
     //deactivate  branch
     @DeleteMapping("deactivate_branch/{branchId}")
-    public ResponseEntity<ApiResponse<Branch>> deactivateBranch(@RequestParam long  branchId){
-        log.info("Deactivating branch {}:",branchId);
+    public ResponseEntity<ApiResponse<Branch>> deactivateBranch(@RequestParam long branchId) {
+        log.info("Deactivating branch {}:", branchId);
         headBankAdminSerivice.deactivateBranch(branchId);
-        log.info("successfully deactivated branch {}:",branchId);
-        return ResponseEntity.ok(ApiResponse.success("Branch deactivated successfully",null));
+        log.info("successfully deactivated branch {}:", branchId);
+        return ResponseEntity.ok(ApiResponse.success("Branch deactivated successfully", null));
     }
+
     // add branch manager
     @PostMapping("/add-branch_manager")
-    public ResponseEntity<ApiResponse<BranchManager>> addBranchManager(@Valid @RequestBody BranchManagerDTO branchManagerDTO){
-        log.info("adding branch manager to branch : {}",branchManagerDTO.getFirstName()+" "+branchManagerDTO.getLastName());
-        BranchManager branchManager=headBankAdminSerivice.addBranchManager(branchManagerDTO);
-        log.info("succesfully added branch manager {}",branchManager.getFullName());
-        return  ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("Branch manager deactivated successfully",null));
+    public ResponseEntity<ApiResponse<BranchManager>> addBranchManager(@Valid @RequestBody BranchManagerDTO branchManagerDTO) {
+        log.info("adding branch manager to branch : {}", branchManagerDTO.getFirstName() + " " + branchManagerDTO.getLastName());
+        BranchManager branchManager = headBankAdminSerivice.addBranchManager(branchManagerDTO);
+        log.info("succesfully added branch manager {}", branchManager.getFullName());
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("Branch manager deactivated successfully", null));
     }
 
     //create loan offers
     @PostMapping("create-loan-offers")
-    public  ResponseEntity<ApiResponse<LoanOffers>> addLoanOffers(@RequestBody LoanOfferDTO loanOfferDTO){
-        log.info("adding new loan offer {}",loanOfferDTO.getName());
+    public ResponseEntity<ApiResponse<LoanOffers>> addLoanOffers(@RequestBody LoanOfferDTO loanOfferDTO) {
+        log.info("adding new loan offer {}", loanOfferDTO.getName());
         headBankAdminSerivice.addLoanOffer(loanOfferDTO);
-        log.info("successfully added loan offers {}",loanOfferDTO.getName());
-        return  ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("Added enw loan offer successfully",null));
+        log.info("successfully added loan offers {}", loanOfferDTO.getName());
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("Added enw loan offer successfully", null));
 
     }
     // update loan offers
@@ -74,7 +88,7 @@ public class HeadBankAdminController {
     @GetMapping("/headBank-earning")
     public ResponseEntity<ApiResponse<BigDecimal>> getHeadBankEarnings(@RequestParam Long headBankId) {
         log.info("Received request to get head bank earnings for ID: {}", headBankId);
-        BigDecimal earnings=headBankAdminSerivice.getHeadBankEarning(headBankId);
+        BigDecimal earnings = headBankAdminSerivice.getHeadBankEarning(headBankId);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(ApiResponse.success("Head bank earnings retrieved successfully", earnings));
     }
 
@@ -82,20 +96,142 @@ public class HeadBankAdminController {
     @GetMapping("/bank-earning")
     public ResponseEntity<ApiResponse<BigDecimal>> getBankEarnings(@RequestParam Long bankId) {
         log.info("Received request to get  bank earnings for ID: {}", bankId);
-        BigDecimal earnings=headBankAdminSerivice.getBankEarning(bankId);
+        BigDecimal earnings = headBankAdminSerivice.getBankEarning(bankId);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(ApiResponse.success(" bank earnings retrieved successfully", earnings));
     }
 
-    // set debit card rules implemented later on
-//    @PostMapping("/card-rules")
-//    public ResponseEntity<ApiResponse<DebitCardRules>> setDebitCardRules(@Valid @RequestBody DebitCardRulesDTO rulesDTO) {
-//        log.info("Received request to set debit card rules for card type: {}", rulesDTO.getCardType());
-//        DebitCardRules rules = headBankAdminSerivice.createDebitCardRules(rulesDTO);
-//        return ResponseEntity.status(HttpStatus.CREATED)
-//                .body(ApiResponse.success("Debit card rules set successfully", rules));
-//    }
+    // ==================== CHARGES ENDPOINTS ====================
 
-    // get branch performacne matrices
+    /**
+     * Get charges by date range for Head Bank
+     * Example: /api/headBank/charges/date-range?headBankId=1&startDate=2024-01-01T00:00:00&endDate=2024-12-31T23:59:59
+     */
+    @GetMapping("/charges/date-range")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> getHeadBankChargesByDateRange(
+            @RequestParam Long headBankId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
 
+        log.info("Fetching Head Bank charges for ID: {}, date range: {} to {}", headBankId, startDate, endDate);
+        Map<String, Object> charges = chargesService.getChargesByDateRange(
+                headBankId, BankType.HEAD_BANK, startDate, endDate);
+        log.info("Successfully retrieved charges for Head Bank ID: {}", headBankId);
+        return ResponseEntity.ok(ApiResponse.success("Charges retrieved successfully", charges));
+    }
 
+    /**
+     * Get last month charges for Head Bank
+     * Example: /api/headBank/charges/last-month?headBankId=1
+     */
+    @GetMapping("/charges/last-month")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> getHeadBankChargesLastMonth(
+            @RequestParam Long headBankId) {
+
+        log.info("Fetching Head Bank charges for last month, ID: {}", headBankId);
+        Map<String, Object> charges = chargesService.getChargesLastMonth(
+                headBankId, BankType.HEAD_BANK);
+        log.info("Successfully retrieved last month charges for Head Bank ID: {}", headBankId);
+        return ResponseEntity.ok(ApiResponse.success("Last month charges retrieved successfully", charges));
+    }
+
+    /**
+     * Get last year charges for Head Bank (grouped by month)
+     * Example: /api/headBank/charges/last-year?headBankId=1
+     */
+    @GetMapping("/charges/last-year")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> getHeadBankChargesLastYear(
+            @RequestParam Long headBankId) {
+
+        log.info("Fetching Head Bank charges for last year, ID: {}", headBankId);
+        Map<String, Object> charges = chargesService.getChargesLastYear(
+                headBankId, BankType.HEAD_BANK);
+        log.info("Successfully retrieved last year charges for Head Bank ID: {}", headBankId);
+        return ResponseEntity.ok(ApiResponse.success("Last year charges retrieved successfully", charges));
+    }
+
+    /**
+     * Get charges detail for a specific transaction
+     * Example: /api/headBank/charges/transaction/123
+     */
+    @GetMapping("/charges/transaction/{transactionId}")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> getTransactionChargesDetail(
+            @PathVariable Long transactionId) {
+
+        log.info("Fetching charge details for transaction ID: {}", transactionId);
+        Map<String, Object> charges = chargesService.getTransactionChargesDetail(transactionId);
+        log.info("Successfully retrieved charge details for transaction ID: {}", transactionId);
+        return ResponseEntity.ok(ApiResponse.success("Transaction charges retrieved successfully", charges));
+    }
+
+    /**
+     * Add new debit card rules
+     * POST /api/headBank/debit-card-rules
+     */
+    @PostMapping("/debit-card-rules")
+    public ResponseEntity<ApiResponse<DebitCardRules>> addDebitCardRules(
+            @Valid @RequestBody DebitCardRulesDTO rulesDTO) {
+        log.info("Adding new debit card rules for card type: {}", rulesDTO.getCardType());
+        DebitCardRules debitCardRules = debitCardRulesService.addDebitCardRules(rulesDTO);
+        log.info("Successfully added debit card rules with ID: {}", debitCardRules.getId());
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ApiResponse.success("Debit card rules created successfully", debitCardRules));
+    }
+
+    /**
+     * Update existing debit card rules
+     * PUT /api/headBank/debit-card-rules/{rulesId}
+     */
+    @PutMapping("/debit-card-rules/{rulesId}")
+    public ResponseEntity<ApiResponse<DebitCardRules>> updateDebitCardRules(
+            @PathVariable Long rulesId,
+            @Valid @RequestBody DebitCardRulesDTO rulesDTO) {
+        log.info("Updating debit card rules with ID: {}", rulesId);
+        DebitCardRules updatedRules = debitCardRulesService.updateDebitCardRules(rulesId, rulesDTO);
+        log.info("Successfully updated debit card rules with ID: {}", rulesId);
+        return ResponseEntity.ok(ApiResponse.success("Debit card rules updated successfully", updatedRules));
+    }
+
+    /**
+     * Deactivate debit card rules
+     * DELETE /api/headBank/debit-card-rules/{rulesId}
+     */
+    @DeleteMapping("/debit-card-rules/{rulesId}")
+    public ResponseEntity<ApiResponse<Void>> deactivateDebitCardRules(@PathVariable Long rulesId) {
+        log.info("Deactivating debit card rules with ID: {}", rulesId);
+        debitCardRulesService.deactivateDebitCardRules(rulesId);
+        log.info("Successfully deactivated debit card rules with ID: {}", rulesId);
+        return ResponseEntity.ok(ApiResponse.success("Debit card rules deactivated successfully", null));
+    }
+
+    /**
+     * Get all debit card rules for head bank
+     * GET /api/headBank/debit-card-rules/head-bank/{headBankId}
+     */
+    @GetMapping("/debit-card-rules/head-bank/{headBankId}")
+    public ResponseEntity<ApiResponse<List<DebitCardRules>>> getAllDebitCardRulesByHeadBank(
+            @PathVariable Long headBankId) {
+        log.info("Fetching all debit card rules for head bank ID: {}", headBankId);
+        List<DebitCardRules> rules = debitCardRulesService.getAllDebitCardRulesByHeadBank(headBankId);
+        log.info("Successfully retrieved {} debit card rules", rules.size());
+        return ResponseEntity.ok(ApiResponse.success("Debit card rules retrieved successfully", rules));
+    }
+
+    /**
+     * Get all branches of head bank
+     * GET /api/headBank/branches/{headBankId}
+     */
+    @GetMapping("/branches/{headBankId}")
+    public ResponseEntity<ApiResponse<List<Branch>>> getAllBranchesByHeadBank(@PathVariable Long headBankId) {
+        log.info("Fetching all branches for head bank ID: {}", headBankId);
+
+        HeadBank headBank = headBankRepository.findById(headBankId)
+                .orElseThrow(() -> new ResourceNotFoundException("HeadBank", "id", headBankId));
+
+        List<Branch> branches = headBank.getBranches().stream()
+                .filter(Branch::getIsActive)
+                .toList();
+
+        log.info("Successfully retrieved {} branches", branches.size());
+        return ResponseEntity.ok(ApiResponse.success("Branches retrieved successfully", branches));
+    }
 }

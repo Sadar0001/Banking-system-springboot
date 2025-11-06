@@ -123,7 +123,6 @@ public class TellerController {
         return ResponseEntity.ok(ApiResponse.success("Cheque book request rejected successfully", null));
     }
 
-    // ==================== CUSTOMER MANAGEMENT ====================
 
     @GetMapping("/{tellerId}/customers")
     public ResponseEntity<ApiResponse<List<Customer>>> getBranchCustomers(

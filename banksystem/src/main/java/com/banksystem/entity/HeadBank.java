@@ -62,10 +62,10 @@ public class HeadBank {
     @JsonIgnore
     private List<LoanOffers> loanOffers;
 
+
     @OneToMany(mappedBy = "headBank", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<DebitCardRules> debitCardRules;
-
 
 
     @OneToMany(mappedBy = "headBank", cascade = CascadeType.ALL)

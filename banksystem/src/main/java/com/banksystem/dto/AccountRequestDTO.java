@@ -1,4 +1,3 @@
-
 package com.banksystem.dto;
 
 import com.banksystem.enums.AccountType;

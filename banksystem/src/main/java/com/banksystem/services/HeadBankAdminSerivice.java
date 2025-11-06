@@ -7,30 +7,33 @@ import com.banksystem.dto.DebitCardRulesDTO;
 import com.banksystem.dto.LoanOfferDTO;
 import com.banksystem.entity.*;
 import com.banksystem.exception.BusinessRuleException;
-import com.banksystem.repository.BranchRepository;
-import com.banksystem.repository.HeadBankRepository;
-import com.banksystem.repository.LoanOffersRepository;
-import com.banksystem.repository.branchManagerRepository;
+import com.banksystem.exception.ResourceNotFoundException;
+import com.banksystem.repository.*;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
+@Slf4j
 public class HeadBankAdminSerivice {
 
     private final BranchRepository branchRepository;
     private final HeadBankRepository headBankRepository;
-    private final branchManagerRepository branchManagerRepository;
     private final LoanOffersRepository loanOffersRepository;
+    private final DebitCardRulesRepository debitCardRulesRepository;
+    private final BranchManagerRepository branchManagerRepository;
 
-    public HeadBankAdminSerivice(BranchRepository branchRepository, HeadBankRepository headBankRepository, branchManagerRepository branchManagerRepository, LoanOffersRepository loanOffersRepository) {
+    public HeadBankAdminSerivice(BranchRepository branchRepository, HeadBankRepository headBankRepository, LoanOffersRepository loanOffersRepository, DebitCardRulesRepository debitCardRulesRepository, BranchManagerRepository branchManagerRepository) {
         this.branchRepository = branchRepository;
         this.headBankRepository = headBankRepository;
-        this.branchManagerRepository = branchManagerRepository;
         this.loanOffersRepository = loanOffersRepository;
+        this.debitCardRulesRepository = debitCardRulesRepository;
+        this.branchManagerRepository = branchManagerRepository;
     }
 
     @Transactional
@@ -147,7 +150,15 @@ public class HeadBankAdminSerivice {
         return branch.getTotalEarning();
     }
 
-//    public DebitCardRules createDebitCardRules(@Valid DebitCardRulesDTO rulesDTO) {
-//
-////    }
+    public List<DebitCardRules> getAllDebitCardRulesByHeadBank(Long headBankId) {
+        log.info("Fetching all debit card rules for head bank ID: {}", headBankId);
+
+        HeadBank headBank = headBankRepository.findById(headBankId)
+                .orElseThrow(() -> new ResourceNotFoundException("HeadBank", "id", headBankId));
+
+        // Use repository method instead of direct relationship
+        return debitCardRulesRepository.findByHeadBankAndIsActive(headBank, true);
+    }
+
+
 }

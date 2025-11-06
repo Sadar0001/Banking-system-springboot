@@ -177,7 +177,6 @@ public class CustomerController {
         return ResponseEntity.ok(ApiResponse.success("Transaction history retrieved successfully", transactions));
     }
 
-    // ==================== TRANSACTION PIN ====================
 
     @PutMapping("/{customerId}/pin/update")
     public ResponseEntity<ApiResponse<Void>> updateTransactionPin(

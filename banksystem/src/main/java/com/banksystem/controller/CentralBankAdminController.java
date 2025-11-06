@@ -3,14 +3,20 @@ package com.banksystem.controller;
 import com.banksystem.dto.ApiResponse;
 import com.banksystem.dto.HeadBankDTO;
 import com.banksystem.entity.HeadBank;
+import com.banksystem.enums.BankType;
 import com.banksystem.repository.CentralBankRepository;
 import com.banksystem.repository.HeadBankRepository;
 import com.banksystem.services.CentralBankAdminServices;
+import com.banksystem.services.ChargesService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/central-bank")
@@ -20,11 +26,13 @@ public class CentralBankAdminController {
     private final CentralBankRepository centralBankRepository;
     private final CentralBankAdminServices centralBankAdminServices;
     private final HeadBankRepository headBankRepository;
+    private final ChargesService chargesService;
 
-    public CentralBankAdminController(CentralBankRepository centralBankRepository, CentralBankAdminServices centralBankAdminServices, HeadBankRepository headBankRepository) {
+    public CentralBankAdminController(CentralBankRepository centralBankRepository, CentralBankAdminServices centralBankAdminServices, HeadBankRepository headBankRepository, ChargesService chargesService) {
         this.centralBankRepository = centralBankRepository;
         this.centralBankAdminServices = centralBankAdminServices;
         this.headBankRepository = headBankRepository;
+        this.chargesService = chargesService;
     }
 
     // services for head bank
@@ -55,6 +63,83 @@ public class CentralBankAdminController {
 
     }
 
+    // ==================== CHARGES ENDPOINTS ====================
 
-    // get all banks earning or centralbank earning
+    /**
+     * Get charges by date range for Central Bank
+     * Example: /api/central-bank/charges/date-range?centralBankId=1&startDate=2024-01-01T00:00:00&endDate=2024-12-31T23:59:59
+     */
+    @GetMapping("/charges/date-range")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> getCentralBankChargesByDateRange(
+            @RequestParam Long centralBankId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
+
+        log.info("Fetching Central Bank charges for ID: {}, date range: {} to {}", centralBankId, startDate, endDate);
+        Map<String, Object> charges = chargesService.getChargesByDateRange(
+                centralBankId, BankType.CENTRAL_BANK, startDate, endDate);
+        log.info("Successfully retrieved charges for Central Bank ID: {}", centralBankId);
+        return ResponseEntity.ok(ApiResponse.success("Charges retrieved successfully", charges));
+    }
+
+    /**
+     * Get last month charges for Central Bank
+     * Example: /api/central-bank/charges/last-month?centralBankId=1
+     */
+    @GetMapping("/charges/last-month")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> getCentralBankChargesLastMonth(
+            @RequestParam Long centralBankId) {
+
+        log.info("Fetching Central Bank charges for last month, ID: {}", centralBankId);
+        Map<String, Object> charges = chargesService.getChargesLastMonth(
+                centralBankId, BankType.CENTRAL_BANK);
+        log.info("Successfully retrieved last month charges for Central Bank ID: {}", centralBankId);
+        return ResponseEntity.ok(ApiResponse.success("Last month charges retrieved successfully", charges));
+    }
+
+    /**
+     * Get last year charges for Central Bank (grouped by month)
+     * Example: /api/central-bank/charges/last-year?centralBankId=1
+     */
+    @GetMapping("/charges/last-year")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> getCentralBankChargesLastYear(
+            @RequestParam Long centralBankId) {
+
+        log.info("Fetching Central Bank charges for last year, ID: {}", centralBankId);
+        Map<String, Object> charges = chargesService.getChargesLastYear(
+                centralBankId, BankType.CENTRAL_BANK);
+        log.info("Successfully retrieved last year charges for Central Bank ID: {}", centralBankId);
+        return ResponseEntity.ok(ApiResponse.success("Last year charges retrieved successfully", charges));
+    }
+
+    /**
+     * Get charges detail for a specific transaction
+     * Example: /api/central-bank/charges/transaction/123
+     */
+    @GetMapping("/charges/transaction/{transactionId}")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> getTransactionChargesDetail(
+            @PathVariable Long transactionId) {
+
+        log.info("Fetching charge details for transaction ID: {}", transactionId);
+        Map<String, Object> charges = chargesService.getTransactionChargesDetail(transactionId);
+        log.info("Successfully retrieved charge details for transaction ID: {}", transactionId);
+        return ResponseEntity.ok(ApiResponse.success("Transaction charges retrieved successfully", charges));
+    }
+
+
+
+    @GetMapping("/transactions/date-range")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> getAllTransactionsWithChargesByDateRange(
+            @RequestParam Long centralBankId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
+
+        log.info("Fetching all transactions with charges for Central Bank ID: {}, date range: {} to {}",
+                centralBankId, startDate, endDate);
+        Map<String, Object> transactions = chargesService.getAllTransactionsWithChargesByDateRange(
+                centralBankId, BankType.CENTRAL_BANK, startDate, endDate);
+        log.info("Successfully retrieved transactions with charges for Central Bank ID: {}", centralBankId);
+        return ResponseEntity.ok(ApiResponse.success("Transactions with charges retrieved successfully", transactions));
+    }
+
 }
