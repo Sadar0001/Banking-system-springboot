@@ -52,6 +52,8 @@ public class branchManagerService {
         teller.setIsActive(true);
         teller.setCreatedAt(LocalDateTime.now());
         teller.setPasswordHash(tellerDTO.getPassword());
+        teller.setAccountId(tellerDTO.getAccountId());
+        teller.setAccountNumber(teller.getAccountNumber());
 
         branch.getTellers().add(teller);
         teller.setBranch(branch);

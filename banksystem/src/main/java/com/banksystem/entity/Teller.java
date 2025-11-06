@@ -48,6 +48,13 @@ public class Teller {
     @Column(name = "last_login")
     private LocalDateTime lastLogin;
 
+
+    @Column(name="teller_account_id")
+    private Long accountId;
+
+    @Column(name="teller_accountNumber")
+    private String accountNumber;
+
     @OneToMany(mappedBy = "processedBy")
     @JsonIgnore
     private List<CardRequest> processedCardRequests;
@@ -55,17 +62,4 @@ public class Teller {
     @OneToMany(mappedBy = "processedBy")
     @JsonIgnore
     private List<ChequeBookRequest> processedChequeBookRequests;
-
-    @Column(name = "account_number", unique = true, length = 50)
-    private String accountNumber;
-
-
-    @OneToMany(mappedBy = "fromAccount")
-    @JsonIgnore
-    private List<Transaction> outgoingTransactions;
-
-    @OneToMany(mappedBy = "toAccount")
-    @JsonIgnore
-    private List<Transaction> incomingTransactions;
-
 }
