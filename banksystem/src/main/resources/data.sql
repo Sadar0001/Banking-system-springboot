@@ -194,64 +194,64 @@ VALUES
     ('Foreign Currency Fee', 0.03, 2, 'HEAD_BANK', 'TRANSFER', 50000.00, 1000.00, true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
     ('Cross Border Fee', 2.5, 1, 'CENTRAL_BANK', 'TRANSFER', 100000.00, 1000.00, true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
-
+--********************************
 -- ****************************************************************************************
 -- Insert Tellers for Metropolitan Head Bank Branches (2 tellers per branch)
 -- Branch 1: Metropolitan Downtown Branch
-INSERT INTO teller (branch_id, username, email, password_hash, full_name, role, is_active, created_at, last_login)
+INSERT INTO teller (branch_id, username, email, password_hash, full_name, role, is_active, created_at, last_login, teller_account_id, teller_account_number)
 VALUES
-    (1, 'teller_downtown_01', 'teller1.downtown@metropolitanbank.com', '$2a$10$hashedpassword12345678901234567903', 'Alice Johnson', 'teller', true, CURRENT_TIMESTAMP, NULL),
-    (1, 'teller_downtown_02', 'teller2.downtown@metropolitanbank.com', '$2a$10$hashedpassword12345678901234567904', 'Brian Smith', 'teller', true, CURRENT_TIMESTAMP, NULL);
+    (1, 'teller_downtown_01', 'teller1.downtown@metropolitanbank.com', '$2a$10$hashedpassword12345678901234567903', 'Alice Johnson', 'teller', true, CURRENT_TIMESTAMP, NULL, 10001, 'TEL001001'),
+    (1, 'teller_downtown_02', 'teller2.downtown@metropolitanbank.com', '$2a$10$hashedpassword12345678901234567904', 'Brian Smith', 'teller', true, CURRENT_TIMESTAMP, NULL, 10002, 'TEL001002');
 
 -- Branch 2: Metropolitan Uptown Branch
-INSERT INTO teller (branch_id, username, email, password_hash, full_name, role, is_active, created_at, last_login)
+INSERT INTO teller (branch_id, username, email, password_hash, full_name, role, is_active, created_at, last_login, teller_account_id, teller_account_number)
 VALUES
-    (2, 'teller_uptown_01', 'teller1.uptown@metropolitanbank.com', '$2a$10$hashedpassword12345678901234567905', 'Carol Williams', 'teller', true, CURRENT_TIMESTAMP, NULL),
-    (2, 'teller_uptown_02', 'teller2.uptown@metropolitanbank.com', '$2a$10$hashedpassword12345678901234567906', 'Daniel Brown', 'teller', true, CURRENT_TIMESTAMP, NULL);
+    (2, 'teller_uptown_01', 'teller1.uptown@metropolitanbank.com', '$2a$10$hashedpassword12345678901234567905', 'Carol Williams', 'teller', true, CURRENT_TIMESTAMP, NULL, 10003, 'TEL002001'),
+    (2, 'teller_uptown_02', 'teller2.uptown@metropolitanbank.com', '$2a$10$hashedpassword12345678901234567906', 'Daniel Brown', 'teller', true, CURRENT_TIMESTAMP, NULL, 10004, 'TEL002002');
 
 -- Branch 3: Metropolitan Suburban Branch
-INSERT INTO teller (branch_id, username, email, password_hash, full_name, role, is_active, created_at, last_login)
+INSERT INTO teller (branch_id, username, email, password_hash, full_name, role, is_active, created_at, last_login, teller_account_id, teller_account_number)
 VALUES
-    (3, 'teller_suburban_01', 'teller1.suburban@metropolitanbank.com', '$2a$10$hashedpassword12345678901234567907', 'Emma Davis', 'teller', true, CURRENT_TIMESTAMP, NULL),
-    (3, 'teller_suburban_02', 'teller2.suburban@metropolitanbank.com', '$2a$10$hashedpassword12345678901234567908', 'Frank Miller', 'teller', true, CURRENT_TIMESTAMP, NULL);
+    (3, 'teller_suburban_01', 'teller1.suburban@metropolitanbank.com', '$2a$10$hashedpassword12345678901234567907', 'Emma Davis', 'teller', true, CURRENT_TIMESTAMP, NULL, 10005, 'TEL003001'),
+    (3, 'teller_suburban_02', 'teller2.suburban@metropolitanbank.com', '$2a$10$hashedpassword12345678901234567908', 'Frank Miller', 'teller', true, CURRENT_TIMESTAMP, NULL, 10006, 'TEL003002');
 
 -- Insert Tellers for Global Trust Head Bank Branches
 -- Branch 4: Global Trust City Center
-INSERT INTO teller (branch_id, username, email, password_hash, full_name, role, is_active, created_at, last_login)
+INSERT INTO teller (branch_id, username, email, password_hash, full_name, role, is_active, created_at, last_login, teller_account_id, teller_account_number)
 VALUES
-    (4, 'teller_citycenter_01', 'teller1.citycenter@globaltrust.com', '$2a$10$hashedpassword12345678901234567909', 'Grace Wilson', 'teller', true, CURRENT_TIMESTAMP, NULL),
-    (4, 'teller_citycenter_02', 'teller2.citycenter@globaltrust.com', '$2a$10$hashedpassword12345678901234567910', 'Henry Moore', 'teller', true, CURRENT_TIMESTAMP, NULL);
+    (4, 'teller_citycenter_01', 'teller1.citycenter@globaltrust.com', '$2a$10$hashedpassword12345678901234567909', 'Grace Wilson', 'teller', true, CURRENT_TIMESTAMP, NULL, 10007, 'TEL004001'),
+    (4, 'teller_citycenter_02', 'teller2.citycenter@globaltrust.com', '$2a$10$hashedpassword12345678901234567910', 'Henry Moore', 'teller', true, CURRENT_TIMESTAMP, NULL, 10008, 'TEL004002');
 
 -- Branch 5: Global Trust Financial District
-INSERT INTO teller (branch_id, username, email, password_hash, full_name, role, is_active, created_at, last_login)
+INSERT INTO teller (branch_id, username, email, password_hash, full_name, role, is_active, created_at, last_login, teller_account_id, teller_account_number)
 VALUES
-    (5, 'teller_financial_01', 'teller1.financial@globaltrust.com', '$2a$10$hashedpassword12345678901234567911', 'Ivy Taylor', 'teller', true, CURRENT_TIMESTAMP, NULL),
-    (5, 'teller_financial_02', 'teller2.financial@globaltrust.com', '$2a$10$hashedpassword12345678901234567912', 'Jack Anderson', 'teller', true, CURRENT_TIMESTAMP, NULL);
+    (5, 'teller_financial_01', 'teller1.financial@globaltrust.com', '$2a$10$hashedpassword12345678901234567911', 'Ivy Taylor', 'teller', true, CURRENT_TIMESTAMP, NULL, 10009, 'TEL005001'),
+    (5, 'teller_financial_02', 'teller2.financial@globaltrust.com', '$2a$10$hashedpassword12345678901234567912', 'Jack Anderson', 'teller', true, CURRENT_TIMESTAMP, NULL, 10010, 'TEL005002');
 
 -- Branch 6: Global Trust Harbor Branch
-INSERT INTO teller (branch_id, username, email, password_hash, full_name, role, is_active, created_at, last_login)
+INSERT INTO teller (branch_id, username, email, password_hash, full_name, role, is_active, created_at, last_login, teller_account_id, teller_account_number)
 VALUES
-    (6, 'teller_harbor_01', 'teller1.harbor@globaltrust.com', '$2a$10$hashedpassword12345678901234567913', 'Katie Thomas', 'teller', true, CURRENT_TIMESTAMP, NULL),
-    (6, 'teller_harbor_02', 'teller2.harbor@globaltrust.com', '$2a$10$hashedpassword12345678901234567914', 'Leo Jackson', 'teller', true, CURRENT_TIMESTAMP, NULL);
+    (6, 'teller_harbor_01', 'teller1.harbor@globaltrust.com', '$2a$10$hashedpassword12345678901234567913', 'Katie Thomas', 'teller', true, CURRENT_TIMESTAMP, NULL, 10011, 'TEL006001'),
+    (6, 'teller_harbor_02', 'teller2.harbor@globaltrust.com', '$2a$10$hashedpassword12345678901234567914', 'Leo Jackson', 'teller', true, CURRENT_TIMESTAMP, NULL, 10012, 'TEL006002');
 
 -- Insert Tellers for United Financial Head Bank Branches
 -- Branch 7: United Financial Main Branch
-INSERT INTO teller (branch_id, username, email, password_hash, full_name, role, is_active, created_at, last_login)
+INSERT INTO teller (branch_id, username, email, password_hash, full_name, role, is_active, created_at, last_login, teller_account_id, teller_account_number)
 VALUES
-    (7, 'teller_main_01', 'teller1.main@unitedfinancial.com', '$2a$10$hashedpassword12345678901234567915', 'Mia White', 'teller', true, CURRENT_TIMESTAMP, NULL),
-    (7, 'teller_main_02', 'teller2.main@unitedfinancial.com', '$2a$10$hashedpassword12345678901234567916', 'Noah Harris', 'teller', true, CURRENT_TIMESTAMP, NULL);
+    (7, 'teller_main_01', 'teller1.main@unitedfinancial.com', '$2a$10$hashedpassword12345678901234567915', 'Mia White', 'teller', true, CURRENT_TIMESTAMP, NULL, 10013, 'TEL007001'),
+    (7, 'teller_main_02', 'teller2.main@unitedfinancial.com', '$2a$10$hashedpassword12345678901234567916', 'Noah Harris', 'teller', true, CURRENT_TIMESTAMP, NULL, 10014, 'TEL007002');
 
 -- Branch 8: United Financial Westside Branch
-INSERT INTO teller (branch_id, username, email, password_hash, full_name, role, is_active, created_at, last_login)
+INSERT INTO teller (branch_id, username, email, password_hash, full_name, role, is_active, created_at, last_login, teller_account_id, teller_account_number)
 VALUES
-    (8, 'teller_westside_01', 'teller1.westside@unitedfinancial.com', '$2a$10$hashedpassword12345678901234567917', 'Olivia Martin', 'teller', true, CURRENT_TIMESTAMP, NULL),
-    (8, 'teller_westside_02', 'teller2.westside@unitedfinancial.com', '$2a$10$hashedpassword12345678901234567918', 'Paul Thompson', 'teller', true, CURRENT_TIMESTAMP, NULL);
+    (8, 'teller_westside_01', 'teller1.westside@unitedfinancial.com', '$2a$10$hashedpassword12345678901234567917', 'Olivia Martin', 'teller', true, CURRENT_TIMESTAMP, NULL, 10015, 'TEL008001'),
+    (8, 'teller_westside_02', 'teller2.westside@unitedfinancial.com', '$2a$10$hashedpassword12345678901234567918', 'Paul Thompson', 'teller', true, CURRENT_TIMESTAMP, NULL, 10016, 'TEL008002');
 
 -- Branch 9: United Financial Eastgate Branch
-INSERT INTO teller (branch_id, username, email, password_hash, full_name, role, is_active, created_at, last_login)
+INSERT INTO teller (branch_id, username, email, password_hash, full_name, role, is_active, created_at, last_login, teller_account_id, teller_account_number)
 VALUES
-    (9, 'teller_eastgate_01', 'teller1.eastgate@unitedfinancial.com', '$2a$10$hashedpassword12345678901234567919', 'Quinn Garcia', 'teller', true, CURRENT_TIMESTAMP, NULL),
-    (9, 'teller_eastgate_02', 'teller2.eastgate@unitedfinancial.com', '$2a$10$hashedpassword12345678901234567920', 'Rachel Martinez', 'teller', true, CURRENT_TIMESTAMP, NULL);
+    (9, 'teller_eastgate_01', 'teller1.eastgate@unitedfinancial.com', '$2a$10$hashedpassword12345678901234567919', 'Quinn Garcia', 'teller', true, CURRENT_TIMESTAMP, NULL, 10017, 'TEL009001'),
+    (9, 'teller_eastgate_02', 'teller2.eastgate@unitedfinancial.com', '$2a$10$hashedpassword12345678901234567920', 'Rachel Martinez', 'teller', true, CURRENT_TIMESTAMP, NULL, 10018, 'TEL009002');
 
 -- ****************************************************************************************
 -- Insert Customers for Metropolitan Head Bank Branches (4 customers per branch)
@@ -486,6 +486,45 @@ VALUES
     -- Customer 36: Danielle Collins
     (36, 9, 'ACC-UFH003-012-S', 'SAVINGS', 37000.00, 37000.00, 'INR', 'CUSTOMER', 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
+
+--******************************************************************************************
+-- ****************************************************************************************
+-- Insert Account Requests (Mix of PENDING, APPROVED, REJECTED, ISSUED)
+INSERT INTO account_request (customer_id, account_type, status, rejection_reason, created_at, processed_at, branch_id, head_bank_id)
+VALUES
+    -- PENDING Account Requests
+    (1, 'CURRENT', 'PENDING', NULL, CURRENT_TIMESTAMP, NULL, 1, 1),
+    (3, 'SAVINGS', 'PENDING', NULL, CURRENT_TIMESTAMP, NULL, 1, 1),
+    (5, 'CURRENT', 'PENDING', NULL, CURRENT_TIMESTAMP, NULL, 2, 1),
+    (13, 'SAVINGS', 'PENDING', NULL, CURRENT_TIMESTAMP, NULL, 2, 1),
+    (15, 'CURRENT', 'PENDING', NULL, CURRENT_TIMESTAMP, NULL, 3, 2),
+    (25, 'SAVINGS', 'PENDING', NULL, CURRENT_TIMESTAMP, NULL, 3, 2),
+    (27, 'CURRENT', 'PENDING', NULL, CURRENT_TIMESTAMP, NULL, 4, 2),
+    (29, 'SAVINGS', 'PENDING', NULL, CURRENT_TIMESTAMP, NULL, 4, 2),
+
+    -- APPROVED Account Requests
+    (2, 'CURRENT', 'APPROVED', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1, 1),
+    (4, 'SAVINGS', 'APPROVED', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1, 1),
+    (14, 'CURRENT', 'APPROVED', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 2, 1),
+    (16, 'SAVINGS', 'APPROVED', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 2, 1),
+    (26, 'CURRENT', 'APPROVED', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 3, 2),
+    (28, 'SAVINGS', 'APPROVED', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 3, 2),
+
+    -- REJECTED Account Requests
+    (6, 'CURRENT', 'REJECTED', 'Insufficient initial deposit for CURRENT account', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1, 1),
+    (8, 'SAVINGS', 'REJECTED', 'Minimum balance requirement not met', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1, 1),
+    (18, 'CURRENT', 'REJECTED', 'Document verification failed', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 2, 1),
+    (20, 'SAVINGS', 'REJECTED', 'KYC documents incomplete', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 2, 1),
+    (30, 'CURRENT', 'REJECTED', 'Existing account limit reached', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 3, 2),
+    (32, 'SAVINGS', 'REJECTED', 'Address verification pending', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 3, 2),
+
+    -- ISSUED Account Requests
+    (7, 'CURRENT', 'ISSUED', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1, 1),
+    (9, 'SAVINGS', 'ISSUED', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1, 1),
+    (19, 'CURRENT', 'ISSUED', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 2, 1),
+    (21, 'SAVINGS', 'ISSUED', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 2, 1),
+    (31, 'CURRENT', 'ISSUED', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 3, 2),
+    (33, 'SAVINGS', 'ISSUED', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 3, 2);
 -- ****************************************************************************************
 -- Insert Loan Applications for Different Customers
 -- PENDING Loan Applications
@@ -672,44 +711,6 @@ VALUES
     -- One blocked card for demonstration
     (10, 1, '4111111111111999', '999', DATE_ADD(CURRENT_TIMESTAMP, INTERVAL 3 YEAR), true, true, DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 5 DAY), DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 30 DAY));
 
-
--- ****************************************************************************************
--- Insert Account Requests (Mix of PENDING, APPROVED, REJECTED, ISSUED)
-INSERT INTO account_request (customer_id, account_type, initial_deposit, status, rejection_reason, created_at, processed_at)
-VALUES
-    -- PENDING Account Requests
-    (1, 'CURRENT', 50000.00, 'PENDING', NULL, CURRENT_TIMESTAMP, NULL),
-    (3, 'SAVINGS', 25000.00, 'PENDING', NULL, CURRENT_TIMESTAMP, NULL),
-    (5, 'CURRENT', 75000.00, 'PENDING', NULL, CURRENT_TIMESTAMP, NULL),
-    (13, 'SAVINGS', 30000.00, 'PENDING', NULL, CURRENT_TIMESTAMP, NULL),
-    (15, 'CURRENT', 100000.00, 'PENDING', NULL, CURRENT_TIMESTAMP, NULL),
-    (25, 'SAVINGS', 20000.00, 'PENDING', NULL, CURRENT_TIMESTAMP, NULL),
-    (27, 'CURRENT', 80000.00, 'PENDING', NULL, CURRENT_TIMESTAMP, NULL),
-    (29, 'SAVINGS', 35000.00, 'PENDING', NULL, CURRENT_TIMESTAMP, NULL),
-
-    -- APPROVED Account Requests
-    (2, 'CURRENT', 100000.00, 'APPROVED', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (4, 'SAVINGS', 40000.00, 'APPROVED', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (14, 'CURRENT', 120000.00, 'APPROVED', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (16, 'SAVINGS', 35000.00, 'APPROVED', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (26, 'CURRENT', 90000.00, 'APPROVED', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (28, 'SAVINGS', 45000.00, 'APPROVED', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-
-    -- REJECTED Account Requests
-    (6, 'CURRENT', 20000.00, 'REJECTED', 'Insufficient initial deposit for CURRENT account', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (8, 'SAVINGS', 5000.00, 'REJECTED', 'Minimum balance requirement not met', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (18, 'CURRENT', 150000.00, 'REJECTED', 'Document verification failed', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (20, 'SAVINGS', 25000.00, 'REJECTED', 'KYC documents incomplete', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (30, 'CURRENT', 60000.00, 'REJECTED', 'Existing account limit reached', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (32, 'SAVINGS', 15000.00, 'REJECTED', 'Address verification pending', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-
-    -- ISSUED Account Requests
-    (7, 'CURRENT', 80000.00, 'ISSUED', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (9, 'SAVINGS', 50000.00, 'ISSUED', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (19, 'CURRENT', 110000.00, 'ISSUED', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (21, 'SAVINGS', 40000.00, 'ISSUED', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (31, 'CURRENT', 95000.00, 'ISSUED', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    (33, 'SAVINGS', 30000.00, 'ISSUED', NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- ****************************************************************************************
 -- Insert Loan Accounts (linking to existing CURRENT accounts)

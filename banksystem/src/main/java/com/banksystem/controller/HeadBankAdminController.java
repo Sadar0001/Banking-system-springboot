@@ -14,7 +14,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -43,26 +42,43 @@ public class HeadBankAdminController {
         log.info("Adding branch to head Bank {}:", branchDTO.getBranchCode());
         Branch branch = headBankAdminSerivice.addBranch(branchDTO);
         log.info("successfully created branch {}:", branch.getBranchCode());
-        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+        return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.success("Branch deactivated successfully", null));
     }
 
     //deactivate  branch
     @DeleteMapping("deactivate_branch/{branchId}")
-    public ResponseEntity<ApiResponse<Branch>> deactivateBranch(@RequestParam long branchId) {
+    public ResponseEntity<ApiResponse<Branch>> deactivateBranch(@PathVariable long branchId) {
         log.info("Deactivating branch {}:", branchId);
         headBankAdminSerivice.deactivateBranch(branchId);
         log.info("successfully deactivated branch {}:", branchId);
-        return ResponseEntity.ok(ApiResponse.success("Branch deactivated successfully", null));
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("Branch deactivated successfully", null));
     }
 
     // add branch manager
-    @PostMapping("/add-branch_manager")
+    @PostMapping("/branch_manager/add")
     public ResponseEntity<ApiResponse<BranchManager>> addBranchManager(@Valid @RequestBody BranchManagerDTO branchManagerDTO) {
         log.info("adding branch manager to branch : {}", branchManagerDTO.getFirstName() + " " + branchManagerDTO.getLastName());
         BranchManager branchManager = headBankAdminSerivice.addBranchManager(branchManagerDTO);
         log.info("succesfully added branch manager {}", branchManager.getFullName());
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("Branch manager deactivated successfully", null));
+    }
+
+    @DeleteMapping("branch_manager/deactive/{managerId}")
+    public ResponseEntity<ApiResponse<BranchManager>> deactivateBranchManager(@PathVariable Long managerId) {
+        log.info("deactivating branch manager {}:", managerId);
+        BranchManager branchManager=headBankAdminSerivice.deactivateManager(managerId);
+        log.info("successfully deactivated branch manager {}:", branchManager.getFullName());
+        return ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("Branch manager deactivated successfully", null));
+    }
+
+    // get all loan offers
+    @GetMapping("/loan-offers/all/{headBankId}")
+    public ResponseEntity<ApiResponse<List<LoanOffers>>> getAllLoanOffers(@PathVariable Long headBankId) {
+        log.info("getting loan offers from headbank {}:", headBankId);
+        List<LoanOffers> ls=headBankAdminSerivice.getAllLoanOffers(headBankId);
+        log.info("successfully getting loan offers from headbank {}:", headBankId);
+        return  ResponseEntity.status(HttpStatus.OK).body(ApiResponse.success("LoanOffers found successfully", ls));
     }
 
     //create loan offers
@@ -82,6 +98,14 @@ public class HeadBankAdminController {
         LoanOffers updatedOffer = headBankAdminSerivice.updateLoanOffer(id, offerDTO);
         log.info("Successfully updated loan offer with ID: {}", id);
         return ResponseEntity.ok(ApiResponse.success("Loan offer updated successfully", updatedOffer));
+    }
+
+    @DeleteMapping("/{headBankId}/loan-offers/deactive/{id}")
+    public ResponseEntity<ApiResponse<LoanOffers>> deactivateLoanOffer(@PathVariable Long headBankId,@PathVariable Long id) {
+        log.info("deactivating loan offer with ID: {}", id);
+        LoanOffers loanOffers=headBankAdminSerivice.deactivateLoanOffers(headBankId,id);
+        log.info("successfully deactivated loan offer with ID: {}", id);
+        return ResponseEntity.ok(ApiResponse.success("Loan offer updated successfully", loanOffers));
     }
 
     //headbank eanrign get

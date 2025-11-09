@@ -25,11 +25,11 @@ public class TellerController {
 
     // ==================== ACCOUNT REQUESTS ====================
 
-    @GetMapping("/{tellerId}/accounts/requests/pending")
+    @GetMapping("/{branchId}/accounts/requests/pending")
     public ResponseEntity<ApiResponse<List<AccountRequest>>> getPendingAccountRequests(
-            @PathVariable Long tellerId) {
-        log.info("Teller {} fetching pending account requests", tellerId);
-        List<AccountRequest> requests = tellerService.getPendingAccountRequests(tellerId);
+            @PathVariable Long branchId) {
+        log.info("Teller {} fetching pending account requests for branch Id: ", branchId);
+        List<AccountRequest> requests = tellerService.getPendingAccountRequests(branchId);
         log.info("Found {} pending account requests", requests.size());
         return ResponseEntity.ok(ApiResponse.success("Pending account requests retrieved successfully", requests));
     }
@@ -137,7 +137,7 @@ public class TellerController {
     public ResponseEntity<ApiResponse<Customer>> updateCustomerDetails(
             @PathVariable Long tellerId,
             @PathVariable Long customerId,
-            @RequestBody Customer updatedDetails) {
+            @RequestBody CustomerUpdateDTO updatedDetails) {
         log.info("Teller {} updating details for customer: {}", tellerId, customerId);
         Customer customer = tellerService.updateCustomerDetails(tellerId, customerId, updatedDetails);
         log.info("Customer {} details updated successfully", customerId);

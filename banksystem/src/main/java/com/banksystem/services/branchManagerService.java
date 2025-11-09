@@ -3,22 +3,25 @@ package com.banksystem.services;
 
 import com.banksystem.dto.TellerDTO;
 import com.banksystem.entity.*;
-import com.banksystem.enums.AccountStatus;
-import com.banksystem.enums.RequestStatus;
+import com.banksystem.enums.*;
 import com.banksystem.exception.BusinessRuleException;
 import com.banksystem.exception.ResourceNotFoundException;
 import com.banksystem.repository.*;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class branchManagerService {
 
     private final BranchRepository branchRepository;
@@ -29,8 +32,9 @@ public class branchManagerService {
     private final CustomerRepository customerRepository;
     private final TransactionRepository transactionRepository;
     private final BranchManagerRepository branchManagerRepository;
+    private final TellerService tellerService;
 
-    public branchManagerService(BranchRepository branchRepository, TellerRepository tellerRepository, LoanApplicationRepository loanApplicationRepository, ChargesBookRepository chargesBookRepository, AccountRepository accountRepository, CustomerRepository customerRepository, TransactionRepository transactionRepository, BranchManagerRepository branchManagerRepository) {
+    public branchManagerService(BranchRepository branchRepository, TellerRepository tellerRepository, LoanApplicationRepository loanApplicationRepository, ChargesBookRepository chargesBookRepository, AccountRepository accountRepository, CustomerRepository customerRepository, TransactionRepository transactionRepository, BranchManagerRepository branchManagerRepository, TellerService tellerService) {
         this.branchRepository = branchRepository;
         this.tellerRepository = tellerRepository;
         this.loanApplicationRepository = loanApplicationRepository;
@@ -39,27 +43,89 @@ public class branchManagerService {
         this.customerRepository = customerRepository;
         this.transactionRepository = transactionRepository;
         this.branchManagerRepository = branchManagerRepository;
+        this.tellerService = tellerService;
     }
 
     @Transactional
     public  Teller addTeller(@Valid TellerDTO tellerDTO) {
-        // branch-exist add birectional return
-        Branch branch =branchRepository.findById(tellerDTO.getBranchId()).orElseThrow(()-> new BusinessRuleException("Branch not found with id "+tellerDTO.getBranchId()));
-        Teller teller = new Teller();
-        teller.setFullName(tellerDTO.getFirstName()+tellerDTO.getLastName());
-        teller.setUsername(tellerDTO.getUsername());
-        teller.setEmail(tellerDTO.getEmail());
-        teller.setIsActive(true);
-        teller.setCreatedAt(LocalDateTime.now());
-        teller.setPasswordHash(tellerDTO.getPassword());
-        teller.setAccountId(tellerDTO.getAccountId());
-        teller.setAccountNumber(teller.getAccountNumber());
+        try {
+            log.info("Finding branch: {}", tellerDTO.getBranchId());
+            Branch branch = branchRepository.findById(tellerDTO.getBranchId())
+                    .orElseThrow(() -> new BusinessRuleException("Branch not found"));
 
-        branch.getTellers().add(teller);
-        teller.setBranch(branch);
-        Teller savedTeller = tellerRepository.save(teller);
+            log.info("Finding account: {}", tellerDTO.getAccountId());
+            Account account = accountRepository.findById(tellerDTO.getAccountId())
+                    .orElseThrow(() -> new BusinessRuleException("Account not found"));
 
-        return savedTeller;
+            // Validate branch matches
+            if (!account.getBranch().getId().equals(branch.getId())) {
+                throw new BusinessRuleException("Teller branch and account branch doesn't match");
+            }
+
+            // Check if account is already assigned to a teller
+            if (account.getAccountHolderType() == AccountHolderType.TELLER) {
+                throw new BusinessRuleException("Account is already assigned to a teller");
+            }
+
+            // Check if username already exists
+            if (tellerRepository.existsByUsername(tellerDTO.getUsername())) {
+                throw new BusinessRuleException("Username already exists: " + tellerDTO.getUsername());
+            }
+
+            log.info("Creating teller entity");
+            if(!account.getBranch().getId().equals(branch.getId())){
+                throw new BusinessRuleException("teller branch and account branch doesnt match");
+            }
+            Teller teller = new Teller();
+            teller.setFullName(tellerDTO.getFirstName() + " " + tellerDTO.getLastName());
+            teller.setUsername(tellerDTO.getUsername());
+            teller.setEmail(tellerDTO.getEmail());
+            teller.setPasswordHash(tellerDTO.getPassword());
+            teller.setAccountId(account.getId());
+            teller.setAccountNumber(account.getAccountNumber());
+            teller.setBranch(branch);
+
+            account.setAccountHolderType(AccountHolderType.TELLER);
+            accountRepository.save(account);
+
+//            branch.getTellers().add(teller);
+
+            log.info("Saving teller");
+            Teller savedTeller = tellerRepository.save(teller);
+
+            log.info("Successfully saved teller with ID: {}", savedTeller.getId());
+            return savedTeller;
+
+        }catch (BusinessRuleException e) {
+            log.error("Business rule violation: {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("Error adding teller: ", e);
+            throw new BusinessRuleException("Failed to add teller: " + e.getMessage());
+        }
+
+
+//        // branch-exist add birectional return
+//        Branch branch =branchRepository.findById(tellerDTO.getBranchId()).orElseThrow(()-> new BusinessRuleException("Branch not found with id "+tellerDTO.getBranchId()));
+//        Account account=accountRepository.findById(tellerDTO.getAccountId()).orElseThrow(()->new BusinessRuleException("accunt not found with the account id"));
+//        if(!account.getBranch().getId().equals(branch.getId())){
+//            throw new BusinessRuleException("teller branch and account branch doesnt match");
+//        }
+//        Teller teller = new Teller();
+//        teller.setFullName(tellerDTO.getFirstName()+tellerDTO.getLastName());
+//        teller.setUsername(tellerDTO.getUsername());
+//        teller.setEmail(tellerDTO.getEmail());
+//        teller.setPasswordHash(tellerDTO.getPassword());
+//        teller.setAccountId(tellerDTO.getAccountId());
+//        teller.setAccountNumber(tellerDTO.getAccountNumeber());
+//
+//        account.setAccountHolderType(AccountHolderType.TELLER);
+//        accountRepository.save(account);
+//
+//        branch.getTellers().add(teller);
+//        teller.setBranch(branch);
+//        return tellerRepository.save(teller);
+
     }
 
 
@@ -118,7 +184,58 @@ public class branchManagerService {
         loanApplication.setApprovedTenureMonths(approvedTenure);
         loanApplication.setApprovedAt(LocalDateTime.now());
 
+        LoanOffers loanOffers=loanApplication.getLoanOffer();
+
+        Account account=new Account();
+        account.setCustomer(loanApplication.getCustomer());
+        account.setBranch(loanApplication.getCustomer().getBranch());
+        account.setAccountType(AccountType.LOAN);
+        account.setAccountNumber(tellerService.generateAccountNumber());
+        account.setCurrentBalance(approvedAmount);
+        account.setAvailableBalance(approvedAmount);
+        Account savedAccount=accountRepository.save(account);
+
+        // Calculate EMI
+        BigDecimal emiAmount = calculateEMI(approvedAmount, loanOffers.getInterestRate(), approvedTenure);
+
+
+        LoanAccount loanAccount=new  LoanAccount();
+        loanAccount.setAccount(savedAccount);
+        loanAccount.setLoanOffer(loanApplication.getLoanOffer());
+        loanAccount.setDisbursedAmount(approvedAmount);
+        loanAccount.setOutstandingBalance(approvedAmount);
+        loanAccount.setInterestRate(loanOffers.getInterestRate());
+        loanAccount.setStartDate(LocalDate.now());
+        loanAccount.setEndDate(LocalDate.now().plusMonths(approvedTenure));
+        loanAccount.setEmiAmount(emiAmount);
+        loanAccount.setNextEmiDate(LocalDate.now().plusMonths(1));
+        loanAccount.setTenureMonths(approvedTenure);
+        loanAccount.setStatus(LoanStatus.APPROVED);
+
+
+
+
         return loanApplicationRepository.save(loanApplication);
+    }
+
+    private BigDecimal calculateEMI(BigDecimal principal, BigDecimal annualInterestRate, Integer tenureMonths) {
+        if (tenureMonths <= 0) {
+            return principal;
+        }
+
+        // Convert annual rate to monthly and decimal
+        BigDecimal monthlyRate = annualInterestRate
+                .divide(BigDecimal.valueOf(100), 10, RoundingMode.HALF_UP)
+                .divide(BigDecimal.valueOf(12), 10, RoundingMode.HALF_UP);
+
+        // EMI formula: P * r * (1+r)^n / ((1+r)^n - 1)
+        BigDecimal onePlusR = BigDecimal.ONE.add(monthlyRate);
+        BigDecimal power = onePlusR.pow(tenureMonths);
+
+        BigDecimal numerator = principal.multiply(monthlyRate).multiply(power);
+        BigDecimal denominator = power.subtract(BigDecimal.ONE);
+
+        return numerator.divide(denominator, 2, RoundingMode.HALF_UP);
     }
 
     /**
@@ -148,7 +265,7 @@ public class branchManagerService {
         return loanApplicationRepository.save(loanApplication);
     }
 
-    /**
+    /*
      * 4. Freeze customer account or all accounts
      */
     @Transactional

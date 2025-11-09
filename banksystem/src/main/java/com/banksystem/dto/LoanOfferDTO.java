@@ -22,4 +22,5 @@ public class LoanOfferDTO {
     private Integer maxTenure;
     private BigDecimal processingFee;
     private Long headBankId;
+    private String eligibilityCriteria;
 }

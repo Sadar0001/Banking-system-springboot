@@ -30,8 +30,6 @@ public class AccountRequest {
     @Column(name = "account_type", nullable = false)
     private AccountType accountType;
 
-    @Column(name = "initial_deposit", precision = 15, scale = 2)
-    private BigDecimal initialDeposit;
 
     @Enumerated(EnumType.STRING)
     @Column(length = 20)
@@ -45,4 +43,10 @@ public class AccountRequest {
 
     @Column(name = "processed_at")
     private LocalDateTime processedAt;
+
+    @Column(name="branch_id")
+    private Long branchId;
+
+    @Column(name="head_bank_id")
+    private Long headBankId;
 }

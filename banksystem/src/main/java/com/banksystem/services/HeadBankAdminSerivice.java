@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -80,6 +81,10 @@ public class HeadBankAdminSerivice {
     public BranchManager addBranchManager(@Valid BranchManagerDTO managerDTO) {
         // add if adready manager exist in this
         // add save return
+        Optional<BranchManager> branchManager=branchManagerRepository.findByBranchId(managerDTO.getBranchId());
+        if(branchManager.isPresent()){
+            throw new BusinessRuleException("Branch Manager  already exists for this brnach, manager id is "+branchManager.get().getId());
+        }
         Branch branch=branchRepository.findById(managerDTO.getBranchId()).orElseThrow(()-> new BusinessRuleException("branch not found with id "+managerDTO.getBranchId()));
 
         BranchManager manager = new BranchManager();
@@ -88,6 +93,7 @@ public class HeadBankAdminSerivice {
         manager.setEmail(managerDTO.getEmail());
         manager.setBranch(branch);
         manager.setIsActive(true);
+        manager.setPasswordHash(managerDTO.getPassword());
         manager.setCreatedAt(LocalDateTime.now());
 
         BranchManager savedManager = branchManagerRepository.save(manager);
@@ -111,6 +117,7 @@ public class HeadBankAdminSerivice {
         loanOffer.setMaxTenureMonths(offerDTO.getMaxTenure());
         loanOffer.setIsActive(true);
         loanOffer.setCreatedAt(LocalDateTime.now());
+        loanOffer.setEligibilityCriteria(offerDTO.getEligibilityCriteria());
 
 
         loanOffer.setHeadBank(headBank);
@@ -161,4 +168,28 @@ public class HeadBankAdminSerivice {
     }
 
 
+    public BranchManager deactivateManager(long managerId) {
+        BranchManager branchManager=branchManagerRepository.findById(managerId)  .orElseThrow(() -> {
+            log.error("Manager with ID {} not found", managerId);
+            return new RuntimeException("Manager id " + managerId + " not found");
+        });
+        branchManager.setIsActive(false);
+        branchManagerRepository.save(branchManager);
+
+        return branchManager;
+    }
+
+    public List<LoanOffers> getAllLoanOffers(Long headBankId) {
+       return loanOffersRepository.findAllByHeadBankId(headBankId);
+    }
+
+    public LoanOffers deactivateLoanOffers(Long headBankId,Long id) {
+        LoanOffers loanOffer = loanOffersRepository.findById(id)
+                .orElseThrow(() -> new BusinessRuleException("Loan offer not found with id: " + id));
+        if(!loanOffer.getHeadBank().getId().equals(headBankId)) {
+            throw new BusinessRuleException("this loan offer is not of your Head Bank" + id);
+        }
+        loanOffer.setIsActive(false);
+        return loanOffersRepository.save(loanOffer);
+    }
 }

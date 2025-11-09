@@ -10,7 +10,7 @@ public class TellerDTO {
     private String password;
     private String phone;
     private Long branchId;
-    private String accountNumeber;
+    private String accountNumber;
     private Long accountId;
 }
 

@@ -24,7 +24,7 @@ public class Teller {
     @JsonIgnore
     private Branch branch;
 
-    @Column(nullable = false, unique = true, length = 100)
+    @Column(nullable = false,unique = true, length = 100)
     private String username;
 
     @Column(nullable = false)
@@ -49,10 +49,10 @@ public class Teller {
     private LocalDateTime lastLogin;
 
 
-    @Column(name="teller_account_id")
+    @Column(name="teller_account_id",nullable = false)
     private Long accountId;
 
-    @Column(name="teller_accountNumber")
+    @Column(name="teller_account_number",nullable = false)
     private String accountNumber;
 
     @OneToMany(mappedBy = "processedBy")

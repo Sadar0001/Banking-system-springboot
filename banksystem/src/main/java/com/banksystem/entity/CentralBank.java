@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Table(name="central_bank")
 @AllArgsConstructor
 @Getter  @Setter
 @Builder

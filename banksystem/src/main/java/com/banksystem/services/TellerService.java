@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -72,12 +73,12 @@ import java.util.UUID;
         // ==================== ACCOUNT REQUESTS ====================
 
 
-        public List<AccountRequest> getPendingAccountRequests(Long tellerId) {
-            Teller teller = tellerRepository.findById(tellerId)
-                    .orElseThrow(() -> new BusinessRuleException("Teller not found"));
+        public List<AccountRequest> getPendingAccountRequests(Long branchId) {
 
-            return accountRequestRepository.findPendingAccountRequestsByBranch( // CHANGE THIS
-                    teller.getBranch().getId(), RequestStatus.PENDING);
+            List<AccountRequest> accountRequests=new ArrayList<>();
+            accountRequests=accountRequestRepository.findByBranchId(branchId);
+
+            return accountRequests;
         }
 
         @Transactional
@@ -97,8 +98,6 @@ import java.util.UUID;
             account.setBranch(request.getCustomer().getBranch());
             account.setAccountNumber(generateAccountNumber());
             account.setAccountType(request.getAccountType());
-            account.setCurrentBalance(request.getInitialDeposit());
-            account.setAvailableBalance(request.getInitialDeposit());
             account.setStatus(AccountStatus.ACTIVE);
             account.setOpenedDate(LocalDateTime.now());
             account.setCreatedAt(LocalDateTime.now());
@@ -273,7 +272,7 @@ import java.util.UUID;
         }
 
         @Transactional
-        public Customer updateCustomerDetails(Long tellerId, Long customerId, Customer updatedDetails) {
+        public Customer updateCustomerDetails(Long tellerId, Long customerId, CustomerUpdateDTO updatedDetails) {
             Teller teller = tellerRepository.findById(tellerId)
                     .orElseThrow(() -> new BusinessRuleException("Teller not found"));
 
@@ -296,6 +295,13 @@ import java.util.UUID;
                 customer.setAddress(updatedDetails.getAddress());
             }
 
+            if(updatedDetails.getFirstName() != null) {
+                customer.setFirstName(updatedDetails.getFirstName());
+            }
+            if(updatedDetails.getLastName() != null) {
+                customer.setLastName(updatedDetails.getLastName());
+            }
+
             customer.setUpdatedAt(LocalDateTime.now());
             return customerRepository.save(customer);
         }
@@ -303,7 +309,7 @@ import java.util.UUID;
         // ==================== HELPER METHODS FOR GENERATION ====================
 
 
-        private String generateAccountNumber() {
+        public String generateAccountNumber() {
             return "ACC" + System.currentTimeMillis() +
                     UUID.randomUUID().toString().substring(0, 6).toUpperCase();
         }

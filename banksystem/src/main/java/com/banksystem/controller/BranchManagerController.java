@@ -8,12 +8,10 @@ import com.banksystem.services.ChargesService;
 import com.banksystem.services.branchManagerService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,11 +22,9 @@ import java.util.Map;
 @Slf4j
 public class BranchManagerController {
 
-    @Autowired
-    private branchManagerService branchManagerService;
 
-    @Autowired
-    private ChargesService chargesService;
+    private final branchManagerService branchManagerService;
+    private final ChargesService chargesService;
 
     // Fix constructor to include both services
     public BranchManagerController(branchManagerService branchManagerService, ChargesService chargesService) {
@@ -38,7 +34,7 @@ public class BranchManagerController {
 
     // ==================== TELLER MANAGEMENT ====================
 
-    @PostMapping("/tellers")
+    @PostMapping("/tellers/add")
     public ResponseEntity<ApiResponse<Teller>> addTeller(@Valid @RequestBody TellerDTO tellerDTO) {
         log.info("Received request to add new teller: {}", tellerDTO.getUsername());
         Teller teller = branchManagerService.addTeller(tellerDTO);
@@ -47,16 +43,16 @@ public class BranchManagerController {
                 .body(ApiResponse.success("Teller created successfully", teller));
     }
 
-    @DeleteMapping("/tellers/{id}")
+    @DeleteMapping("/tellers/deactivate/{id}")
     public ResponseEntity<ApiResponse<Void>> deactivateTeller(@PathVariable Long id) {
         log.info("Received request to deactivate teller with ID: {}", id);
         branchManagerService.deactivateTeller(id);
         log.info("Successfully deactivated teller with ID: {}", id);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+        return ResponseEntity.status(HttpStatus.OK)
                 .body(ApiResponse.success("Teller deactivated successfully", null));
     }
 
-    @GetMapping("/tellers/{branchId}")
+    @GetMapping("/tellers/getAllByBranch/{branchId}")
     public ResponseEntity<ApiResponse<List<Teller>>> getTellersByBranch(@PathVariable Long branchId) {
         log.info("Received request to get tellers for branch ID: {}", branchId);
         List<Teller> tellers = branchManagerService.getTellersByBranch(branchId);
@@ -66,7 +62,7 @@ public class BranchManagerController {
 
     // ==================== LOAN MANAGEMENT ====================
 
-    /**
+    /*
      * 1. Get pending loan applications
      */
     @GetMapping("/{branchManagerId}/loans/pending")
@@ -94,9 +90,8 @@ public class BranchManagerController {
         return ResponseEntity.ok(ApiResponse.success("Loan application approved successfully", application));
     }
 
-    /**
-     * 3. Reject loan application
-     */
+
+
     @PostMapping("/{branchManagerId}/loans/{loanApplicationId}/reject")
     public ResponseEntity<ApiResponse<LoanApplication>> rejectLoanApplication(
             @PathVariable Long branchManagerId,

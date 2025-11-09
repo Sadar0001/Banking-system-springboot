@@ -2,7 +2,9 @@ package com.banksystem.controller;
 
 import com.banksystem.dto.*;
 import com.banksystem.entity.*;
+import com.banksystem.enums.AccountHolderType;
 import com.banksystem.services.CustomerService;
+import com.banksystem.services.TransactionService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -19,20 +21,30 @@ import java.util.List;
 public class CustomerController {
 
     private final CustomerService customerService;
+    private final TransactionService transactionService;
 
-    public CustomerController(CustomerService customerService) {
+    public CustomerController(CustomerService customerService, TransactionService transactionService) {
         this.customerService = customerService;
+        this.transactionService = transactionService;
     }
 
     // ==================== ACCOUNT REQUESTS ====================
 
-    @PostMapping("/{customerId}/accounts/request")
+    @PostMapping("/transaction")
+    public ResponseEntity<ApiResponse<Transaction>> makeTransaction( @RequestBody TransactionDto transactionDto) {
+        transactionDto.setAccountHolderType(AccountHolderType.CUSTOMER);
+        log.info("making Transaction of htis transaction Dto {}", transactionDto);
+        Transaction transaction =transactionService.makeTransaction(transactionDto);
+        log.info("transaction successfull {}", transaction);
+        return  ResponseEntity.status(HttpStatus.ACCEPTED).body(ApiResponse.success("Successfully implemented transaction ", transaction));
+    }
+
+    @PostMapping("/accounts/request")
     public ResponseEntity<ApiResponse<AccountRequest>> requestNewAccount(
-            @PathVariable Long customerId,
             @Valid @RequestBody AccountRequestDTO requestDTO) {
-        log.info("Customer {} requesting new {} account", customerId, requestDTO.getAccountType());
-        AccountRequest accountRequest = customerService.createAccountRequest(customerId, requestDTO);
-        log.info("Account request created successfully with ID: {}", accountRequest.getId());
+        log.warn("Customer {} requesting new {} account", requestDTO.getCustomerId(), requestDTO.getAccountType());
+        AccountRequest accountRequest = customerService.createAccountRequest(requestDTO.getCustomerId(), requestDTO);
+        log.warn("Account request created successfully with ID: {}", accountRequest.getId());
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.success("Account request submitted successfully", accountRequest));
     }

@@ -7,6 +7,7 @@ import com.banksystem.enums.AccountType;
 import com.banksystem.enums.RequestStatus;
 import com.banksystem.exception.BusinessRuleException;
 import com.banksystem.repository.*;
+import jdk.jshell.Snippet;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -59,15 +60,24 @@ public class CustomerService {
         Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new BusinessRuleException("Customer not found with id: " + customerId));
 
-        // Check if customer already has an account of this type
-        if (accountRepository.existsByCustomerAndAccountType(customer, requestDTO.getAccountType())) {
-            throw new BusinessRuleException("Customer already has a " + requestDTO.getAccountType() + " account");
+        // Check if customer already has an account of this type in same branch
+        if (accountRepository.existsByCustomerAndAccountTypeAndBranchId(requestDTO.getCustomerId(), requestDTO.getAccountType(),requestDTO.getBranchId())) {
+            throw new BusinessRuleException("Customer already has a " + requestDTO.getAccountType() + " account in same branch "+requestDTO.getBranchId() );
+        }
+
+        // check if request pending
+
+        if (accountRequestRepository.existsByCustomer_IdAndAccountTypeAndBranchIdAndStatus(
+                customerId,
+                requestDTO.getAccountType(),
+                requestDTO.getBranchId(),
+                RequestStatus.PENDING)) {
+            throw new BusinessRuleException("You already have a pending or approved request for " + requestDTO.getAccountType() + " account in this branch");
         }
 
         AccountRequest accountRequest = new AccountRequest();
         accountRequest.setCustomer(customer);
         accountRequest.setAccountType(requestDTO.getAccountType());
-        accountRequest.setInitialDeposit(requestDTO.getInitialDeposit());
         accountRequest.setStatus(RequestStatus.PENDING);
         accountRequest.setCreatedAt(LocalDateTime.now());
 

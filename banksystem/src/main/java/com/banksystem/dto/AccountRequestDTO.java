@@ -8,10 +8,15 @@ import java.math.BigDecimal;
 
 @Data
 public class AccountRequestDTO {
+    @NotNull(message = "Customer id is required")
+    private Long customerId;
+
     @NotNull(message = "Account type is required")
     private AccountType accountType;
 
-    @NotNull(message = "Initial deposit is required")
-    @Positive(message = "Initial deposit must be positive")
-    private BigDecimal initialDeposit;
+    @NotNull(message="HeadBank id is required")
+    private Long headBankId;
+
+    @NotNull(message="Branch Id is required")
+    private Long branchId;
 }

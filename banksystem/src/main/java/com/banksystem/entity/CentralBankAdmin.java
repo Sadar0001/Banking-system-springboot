@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name="central_bank_admin")
 @Getter
 @Setter
 @Builder

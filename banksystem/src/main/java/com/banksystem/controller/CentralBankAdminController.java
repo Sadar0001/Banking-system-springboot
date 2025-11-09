@@ -112,10 +112,7 @@ public class CentralBankAdminController {
         return ResponseEntity.ok(ApiResponse.success("Last year charges retrieved successfully", charges));
     }
 
-    /**
-     * Get charges detail for a specific transaction
-     * Example: /api/central-bank/charges/transaction/123
-     */
+
     @GetMapping("/charges/transaction/{transactionId}")
     public ResponseEntity<ApiResponse<Map<String, Object>>> getTransactionChargesDetail(
             @PathVariable Long transactionId) {
