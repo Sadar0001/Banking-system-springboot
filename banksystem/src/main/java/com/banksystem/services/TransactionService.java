@@ -16,6 +16,7 @@ import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -60,85 +61,93 @@ public class TransactionService {
     )
     @Transactional
     public Transaction makeTransaction(TransactionDto transactionDto) {
-// 1. Validate sender account
 
-        // === DEADLOCK PREVENTION - ADD THIS ===
+        // Prevent self-transfers
+        if (transactionDto.getSenderAccountNumber().equals(transactionDto.getReceiverAccountNumber())) {
+            throw new BusinessRuleException("Cannot transfer to the same account");
+        }
+
+        // Deadlock prevention - lock accounts in alphabetical order
         String acc1 = transactionDto.getSenderAccountNumber();
         String acc2 = transactionDto.getReceiverAccountNumber();
 
-        // Always lock in same order (alphabetical)
-        if (acc1.compareTo(acc2) > 0) {
+        // Determine lock order (alphabetical)
+        boolean firstIsSender = acc1.compareTo(acc2) < 0;
+        if (!firstIsSender) {
             String temp = acc1;
             acc1 = acc2;
             acc2 = temp;
         }
 
-        // Lock accounts in consistent order
+        // Lock accounts in consistent order to prevent deadlock
         Account firstAccount = accountRepository.findByAccountNumberWithLock(acc1);
         Account secondAccount = accountRepository.findByAccountNumberWithLock(acc2);
 
-        // Determine which is sender/receiver
-        Account senderAccount = acc1.equals(transactionDto.getSenderAccountNumber()) ? firstAccount : secondAccount;
-        Account receiverAccount = acc1.equals(transactionDto.getReceiverAccountNumber()) ? firstAccount : secondAccount;
-        // === END FIX ===
+        // Validate accounts exist
+        if (firstAccount == null) {
+            throw new BusinessRuleException("Account not found: " + acc1);
+        }
+        if (secondAccount == null) {
+            throw new BusinessRuleException("Account not found: " + acc2);
+        }
 
+        // Assign sender/receiver based on original order
+        Account senderAccount = firstIsSender ? firstAccount : secondAccount;
+        Account receiverAccount = firstIsSender ? secondAccount : firstAccount;
 
-//        Account senderAccount = accountRepository.findByAccountNumberWithLock(transactionDto.getSenderAccountNumber());
-//        if (senderAccount == null) {
-//            throw new BusinessRuleException("Sender account not found");
-//        }
-//
-//
-//// 2. Validate receiver account
-//        Account receiverAccount = accountRepository.findByAccountNumberWithLock(transactionDto.getReceiverAccountNumber());
-//        if (receiverAccount == null) {
-//            throw new BusinessRuleException("Receiver account not found");
-//        }
+        log.info("Transaction initiated - Sender: {}, Receiver: {}",
+                senderAccount.getAccountNumber(), receiverAccount.getAccountNumber());
 
-// 3. Check account statuses
+        // Validate account statuses
         if (!senderAccount.getStatus().equals(AccountStatus.ACTIVE)) {
             throw new BusinessRuleException("Sender account is not active");
         }
-
         if (!receiverAccount.getStatus().equals(AccountStatus.ACTIVE)) {
             throw new BusinessRuleException("Receiver account is not active");
         }
 
-// 4. Get branch hierarchy (Branch -> Head Bank -> Central Bank)
+        // Get branch hierarchy (already loaded via eager fetch or join)
         Branch branch = senderAccount.getBranch();
         HeadBank headBank = branch.getHeadBank();
         CentralBank centralBank = headBank.getCentralBank();
 
-// 5. Collect charges from all three levels
+        log.info("Bank hierarchy - Branch: {}, HeadBank: {}, CentralBank: {}",
+                branch.getId(), headBank.getId(), centralBank.getId());
+
+        // Collect charges from all three levels
         List<Charges> allCharges = new ArrayList<>();
+        allCharges.addAll(chargesService.getChargesList(
+                createTransactionDto(transactionDto, branch.getId(), BankType.BANK_BRANCH)));
+        allCharges.addAll(chargesService.getChargesList(
+                createTransactionDto(transactionDto, headBank.getId(), BankType.HEAD_BANK)));
+        allCharges.addAll(chargesService.getChargesList(
+                createTransactionDto(transactionDto, centralBank.getId(), BankType.CENTRAL_BANK)));
 
-// Branch charges
-        TransactionDto branchDto = createTransactionDto(transactionDto, branch.getId(), BankType.BANK_BRANCH);
-        allCharges.addAll(chargesService.getChargesList(branchDto));
-
-// Head Bank charges
-        TransactionDto headBankDto = createTransactionDto(transactionDto, headBank.getId(), BankType.HEAD_BANK);
-        allCharges.addAll(chargesService.getChargesList(headBankDto));
-
-// Central Bank charges
-        TransactionDto centralBankDto = createTransactionDto(transactionDto, centralBank.getId(), BankType.CENTRAL_BANK);
-        allCharges.addAll(chargesService.getChargesList(centralBankDto));
-
-// 6. Calculate total charges
-        BigDecimal totalCharges = BigDecimal.ZERO;
-        for (Charges charge : allCharges) {
-            totalCharges = totalCharges.add(BigDecimal.valueOf(charge.getChargedAmount()));
-        }
+        // Calculate total charges
+        BigDecimal totalCharges = allCharges.stream()
+                .map(charge -> BigDecimal.valueOf(charge.getChargedAmount()))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         BigDecimal netAmount = transactionDto.getAmount().subtract(totalCharges);
 
-// 7. Check sufficient balance (amount should cover transaction amount)
-        if (senderAccount.getAvailableBalance().compareTo(transactionDto.getAmount()) < 0) {
-            throw new BusinessRuleException("Insufficient balance. Required: " + transactionDto.getAmount()
-                    + ", Available: " + senderAccount.getAvailableBalance());
+        log.info("Transaction amounts - Total: {}, Charges: {}, Net: {}",
+                transactionDto.getAmount(), totalCharges, netAmount);
+
+        // Validate netAmount is positive
+        if (netAmount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new BusinessRuleException(
+                    String.format("Transaction amount (%.2f) must be greater than total charges (%.2f)",
+                            transactionDto.getAmount(), totalCharges));
         }
 
-// 8. Create and save transaction
+        // Check sufficient balance
+        if (senderAccount.getAvailableBalance().compareTo(transactionDto.getAmount()) < 0) {
+            throw new BusinessRuleException(
+                    String.format("Insufficient balance. Required: %.2f, Available: %.2f",
+                            transactionDto.getAmount(), senderAccount.getAvailableBalance()));
+        }
+
+        // Create and save transaction
         Transaction newTransaction = new Transaction();
         newTransaction.setFromAccount(senderAccount);
         newTransaction.setToAccount(receiverAccount);
@@ -151,40 +160,57 @@ public class TransactionService {
         newTransaction.setStatus(TransactionStatus.COMPLETED);
 
         Transaction savedTransaction = transactionRepository.save(newTransaction);
+        log.info("Transaction saved: {}", savedTransaction.getTransactionReference());
 
-// 9. Associate charges with transaction and save
-        for (Charges charge : allCharges) {
-            charge.setTransaction(savedTransaction);
-        }
+        // Associate charges with transaction
+        allCharges.forEach(charge -> charge.setTransaction(savedTransaction));
         chargesRepository.saveAll(allCharges);
+        log.debug("Charges saved: {} records", allCharges.size());
 
-// 10. Update sender balances (deduct full amount)
-        senderAccount.setCurrentBalance(senderAccount.getCurrentBalance().subtract(transactionDto.getAmount()));
-        senderAccount.setAvailableBalance(senderAccount.getAvailableBalance().subtract(transactionDto.getAmount()));
+        // Update sender balances (deduct full amount including charges)
+        senderAccount.setCurrentBalance(
+                senderAccount.getCurrentBalance().subtract(transactionDto.getAmount()));
+        senderAccount.setAvailableBalance(
+                senderAccount.getAvailableBalance().subtract(transactionDto.getAmount()));
 
-// 11. Update receiver balances (credit net amount after charges)
-        receiverAccount.setCurrentBalance(receiverAccount.getCurrentBalance().add(netAmount));
-        receiverAccount.setAvailableBalance(receiverAccount.getAvailableBalance().add(netAmount));
+        // Update receiver balances (credit net amount after charges)
+        receiverAccount.setCurrentBalance(
+                receiverAccount.getCurrentBalance().add(netAmount));
+        receiverAccount.setAvailableBalance(
+                receiverAccount.getAvailableBalance().add(netAmount));
 
-// 12. Distribute charges to banks (THIS IS THE KEY PART!)
-        distributeChargesToBanks(allCharges);
+        // Distribute charges to banks (using already-fetched entities)
+        distributeChargesToBanks(allCharges, branch, headBank, centralBank);
 
-// 13. Save updated accounts
+        // Save all updated entities
         accountRepository.save(senderAccount);
         accountRepository.save(receiverAccount);
+        branchRepository.save(branch);
+        headBankRepository.save(headBank);
+        centralBankRepository.save(centralBank);
+
+        log.info("Transaction completed successfully: {} | Sender new balance: {}, Receiver new balance: {}",
+                savedTransaction.getTransactionReference(),
+                senderAccount.getAvailableBalance(),
+                receiverAccount.getAvailableBalance());
 
         return savedTransaction;
     }
 
     @Recover
-    public void transferRecover(
-            PessimisticLockingFailureException exception) {
-        log.warn("Transfer FAILED after all retries, reason: {}",exception.getMessage());
-        throw new BusinessRuleException("Transfer FAILED after all retries");
+    public Transaction transferRecover(Exception exception, TransactionDto transactionDto) {
+        log.error("Transaction FAILED after all retries - Sender: {}, Receiver: {}, Amount: {}, Reason: {}",
+                transactionDto.getSenderAccountNumber(),
+                transactionDto.getReceiverAccountNumber(),
+                transactionDto.getAmount(),
+                exception.getMessage());
+        throw new BusinessRuleException("Transaction failed due to system contention. Please try again later.");
     }
 
-    @Transactional
-    public TransactionDto createTransactionDto(TransactionDto original, Long bankId, BankType bankType) {
+    /**
+     * Helper method to create TransactionDto with bank-specific details
+     */
+    private TransactionDto createTransactionDto(TransactionDto original, Long bankId, BankType bankType) {
         TransactionDto dto = new TransactionDto();
         dto.setSenderAccountNumber(original.getSenderAccountNumber());
         dto.setReceiverAccountNumber(original.getReceiverAccountNumber());
@@ -199,52 +225,65 @@ public class TransactionService {
     }
 
     /**
-     * Distributes transaction charges to Central Bank, Head Bank, and Branch
+     * Distributes transaction charges to Central Bank, Head Bank, and Branch.
+     * Uses already-fetched entities to avoid N+1 queries.
      */
+    private void distributeChargesToBanks(List<Charges> charges,
+                                          Branch branch,
+                                          HeadBank headBank,
+                                          CentralBank centralBank) {
+        log.debug("Distributing {} charges to banks", charges.size());
 
-    @Transactional
-    public void distributeChargesToBanks(List<Charges> charges) {
         for (Charges charge : charges) {
             BigDecimal chargeAmount = BigDecimal.valueOf(charge.getChargedAmount());
 
             switch (charge.getBankType()) {
                 case CENTRAL_BANK:
-// Add to Central Bank earnings
-                    centralBankRepository.findById(charge.getBankId()).ifPresent(centralBank -> {
-                        BigDecimal currentEarning = centralBank.getTotalEarning() != null ?
-                                centralBank.getTotalEarning() : BigDecimal.ZERO;
+                    if (charge.getBankId().equals(centralBank.getId())) {
+                        BigDecimal currentEarning = centralBank.getTotalEarning() != null
+                                ? centralBank.getTotalEarning() : BigDecimal.ZERO;
                         centralBank.setTotalEarning(currentEarning.add(chargeAmount));
-                        centralBankRepository.save(centralBank);
-                    });
+                        log.debug("Central Bank earning updated: {}", centralBank.getTotalEarning());
+                    } else {
+                        log.warn("Charge bankId {} doesn't match centralBank id {}",
+                                charge.getBankId(), centralBank.getId());
+                    }
                     break;
 
                 case HEAD_BANK:
-// Add to Head Bank earnings
-                    headBankRepository.findById(charge.getBankId()).ifPresent(headBank -> {
-                        BigDecimal currentEarning = headBank.getTotalEarning() != null ?
-                                headBank.getTotalEarning() : BigDecimal.ZERO;
+                    if (charge.getBankId().equals(headBank.getId())) {
+                        BigDecimal currentEarning = headBank.getTotalEarning() != null
+                                ? headBank.getTotalEarning() : BigDecimal.ZERO;
                         headBank.setTotalEarning(currentEarning.add(chargeAmount));
-                        headBankRepository.save(headBank);
-                    });
+                        log.debug("Head Bank earning updated: {}", headBank.getTotalEarning());
+                    } else {
+                        log.warn("Charge bankId {} doesn't match headBank id {}",
+                                charge.getBankId(), headBank.getId());
+                    }
                     break;
 
                 case BANK_BRANCH:
-// Add to Branch earnings
-                    branchRepository.findById(charge.getBankId()).ifPresent(branch -> {
-                        BigDecimal currentEarning = branch.getTotalEarning() != null ?
-                                branch.getTotalEarning() : BigDecimal.ZERO;
+                    if (charge.getBankId().equals(branch.getId())) {
+                        BigDecimal currentEarning = branch.getTotalEarning() != null
+                                ? branch.getTotalEarning() : BigDecimal.ZERO;
                         branch.setTotalEarning(currentEarning.add(chargeAmount));
-                        branchRepository.save(branch);
-                    });
+                        log.debug("Branch earning updated: {}", branch.getTotalEarning());
+                    } else {
+                        log.warn("Charge bankId {} doesn't match branch id {}",
+                                charge.getBankId(), branch.getId());
+                    }
                     break;
 
                 default:
                     throw new BusinessRuleException("Unknown bank type: " + charge.getBankType());
             }
         }
+
+        log.debug("Charge distribution completed");
     }
 
     private String generateTransactionReference() {
-        return "TXN" + System.currentTimeMillis() + "-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+        return "TXN" + System.currentTimeMillis() + "-" +
+                UUID.randomUUID().toString().substring(0, 8).toUpperCase();
     }
 }

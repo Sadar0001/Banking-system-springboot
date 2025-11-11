@@ -15,7 +15,6 @@ public class ChargesBookController {
 
 
     private final ChargesBookService chargesBookService;
-
     public ChargesBookController(ChargesBookService chargesBookService) {
         this.chargesBookService = chargesBookService;
     }

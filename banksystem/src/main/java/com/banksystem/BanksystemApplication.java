@@ -6,7 +6,7 @@ import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @SpringBootApplication
-@EnableRetry
+//@EnableRetry
 @EnableTransactionManagement
 public class BanksystemApplication {
 

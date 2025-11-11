@@ -1,8 +1,10 @@
 package com.banksystem.controller;
 
+import com.banksystem.dto.ApiResponse;
 import com.banksystem.dto.TransactionDto;
 import com.banksystem.entity.Transaction;
 import com.banksystem.services.TransactionService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
+@Slf4j
 @RequestMapping("/api/transactions")
 public class TransactionController {
 
@@ -21,7 +24,7 @@ public class TransactionController {
     }
 
     @PostMapping("/transfer")
-    public ResponseEntity<?> makeTransaction(@RequestBody TransactionDto transactionDto) {
+    public ResponseEntity<ApiResponse<TransactionDto>> makeTransaction(@RequestBody TransactionDto transactionDto) {
         try {
             Transaction transaction = transactionService.makeTransaction(transactionDto);
 
@@ -35,12 +38,14 @@ public class TransactionController {
             response.put("status", transaction.getStatus());
             response.put("transactionDate", transaction.getTransactionDate());
 
-            return ResponseEntity.ok(response);
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(ApiResponse.success("ok done ",transactionDto));
         } catch (Exception e) {
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("success", false);
             errorResponse.put("message", e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+            log.warn("this is the error {}",e);
+            log.warn("this is the error.maassage {}",e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.success("not able to implement",transactionDto));
         }
     }
 

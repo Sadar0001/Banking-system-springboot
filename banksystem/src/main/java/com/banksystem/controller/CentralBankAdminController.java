@@ -88,12 +88,11 @@ public class CentralBankAdminController {
      */
     @GetMapping("/charges/last-month")
     public ResponseEntity<ApiResponse<Map<String, Object>>> getCentralBankChargesLastMonth(
-            @RequestParam Long centralBankId) {
+           ) {
 
-        log.info("Fetching Central Bank charges for last month, ID: {}", centralBankId);
-        Map<String, Object> charges = chargesService.getChargesLastMonth(
-                centralBankId, BankType.CENTRAL_BANK);
-        log.info("Successfully retrieved last month charges for Central Bank ID: {}", centralBankId);
+        log.info("Fetching Central Bank charges for last month, ID: {}", 1);
+        Map<String, Object> charges = chargesService.getChargesLastMonth(Long.valueOf(1), BankType.CENTRAL_BANK);
+        log.info("Successfully retrieved last month charges for Central Bank ID: {}", 1);
         return ResponseEntity.ok(ApiResponse.success("Last month charges retrieved successfully", charges));
     }
 
